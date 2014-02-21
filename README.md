@@ -1,4 +1,6 @@
-BCC-3s14-PI3
-============
+BCC-PI3
+Repositório para criação do PI III, do Centro Universitário Senac.
 
-Yet unnamed
+OBJETIVO
+
+Criação de um jogo em OpenCV, que utilize apenas webcam como interface.
