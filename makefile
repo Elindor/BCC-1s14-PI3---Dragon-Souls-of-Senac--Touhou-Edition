@@ -19,3 +19,6 @@ $(EXEC): $(OBJ)
 
 clean:
 	rm -rf $(OBJ)
+
+destroy: clean
+	rm -f $(TARGETS)
