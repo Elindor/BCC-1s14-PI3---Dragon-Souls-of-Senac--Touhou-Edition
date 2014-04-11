@@ -1,14 +1,17 @@
-#include <opencv/highgui.h>
+    #include <opencv/highgui.h>
 
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 
+typedef enum ataque{
+    Arrow, Fireball, bla, exemplo4,
+}AttackId;
 
 typedef struct _Monster{
     int HP;
-    int ataque;
+    AttackId ataque;
     ALLEGRO_BITMAP *image;
     float X;
     float Y;
