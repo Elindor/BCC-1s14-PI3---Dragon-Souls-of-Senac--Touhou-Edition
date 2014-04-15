@@ -1,5 +1,5 @@
 #include <opencv/highgui.h>
-
+#include "camera.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
@@ -13,6 +13,7 @@ typedef struct _Ataque{
     float Y;
     int damage;
     int currentDuration;
+    int preAnimationTime;
     int duration;
     ALLEGRO_BITMAP *image;
 
@@ -23,9 +24,23 @@ typedef struct _Ataque{
     
     ataque -> X0 = senderX;
     ataque -> Y0 = senderY;
+    ataque -> preAnimationTime = 0;
+    
     
     ///
     // Adicionar sistema para geração de (X,Y) finais.
+    //
+    // if(meele){
+    // PreAnimationTime = -40;
+    // ataque -> X = senderX;
+    // ataque -> Y = senderY;
+    //  }
+    // else
+    //  do{
+    //
+    //
+    //
+    //  }while(ponto em X,Y MATRIZ GLOBAL == BRANCA);
     ///
 
     ataque -> currentDuration = 0;
@@ -39,6 +54,26 @@ typedef struct _Ataque{
     return ataque;
 }
 
+
+bool checkAttack(Ataque *attack){
+    if (attack -> preAnimationTime < 0) // Em geral, o tempo antes da ativação do ataque. Pra meele e alguns casos especiais. Ele é um contador externo à animação.
+        attack -> preAnimationTime++;
+    else{
+        if(attack -> currentDuration != attack -> duration)
+            attack -> currentDuration++;
+        else{
+            
+            //if(ponto em X,Y MATRIZ GLOBAL == BRANCA || ponto em X,Y MATRIZ GLOBAL != Shield)
+            //ATTACK DAMAAAAGE
+            //Hit, sounds, etc...
+            
+            
+            free(attack);
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
 
 
 ALLEGRO_BITMAP getImage(int number, X0, Y0, X, Y){        // Isto procura a imagem de um ataque dado seu id.

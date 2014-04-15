@@ -1,0 +1,98 @@
+*Concerning Dark Phantoms: They are always knights, and strength is NOT equal. Every of them drop a specific armor piece. They also do not count to wave or max enemies counters.
+
+*Subbosses: they arrive at half of the stage. If they WILL happen, monster stop spawning at that. Some have a CHANCE of spawning - should they not, it won’t stop.
+They count as 10 enemies into Kill Count, and grant barrier.
+
+Stage NUMBER - NAME			WAVE COUNT / MAX ENEMIES
+Monster name (Spawn Chance)              (If sub, chance) Boss name [Barrier given]
+
+
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+
+Player starts. Arrive at a beach on a forsaken land and delves into jungle.
+
+
+Stage 1 - Beach Side Woods		30 / 2
+Monsters:				|			Bosses:
+Crab	(50%)						Old Sorcerer Merlingone [20]
+Fly	(40%)
+Bug (rare)  (10%)
+
+Boss: Player reaches a village entrance.
+
+—----------------------------------------------------------------------------------------
+
+He enter villages. He finds the town ruined and dominated by orcs and kobold. He goes on.
+
+Stage 2 - Ruined Village		40/3
+Monsters:				|			Bosses:
+Fat	(65%)						Troll Chieftain Huehueda [30]
+Kobold	(30%)
+Bug (rare) (5%)
+
+(15% invasion by DarkPhantom) [Hard Leather Leggings] [+1]
+
+Boss: He reaches the central square. There he finds the chieftain, a troll. (hu3 hu3 BR)
+
+-----------------------------------------------------------------------------------------
+
+Player leaves town, to the deeper jungle beyond seeking the castle at the horizon.
+			
+Stage 3 - Frozen Lake			50/4
+Monsters:				|			Bosses:
+Worm	(60%)						(sub, 50%) Flower [20]
+Leech	(35%)					   	    Ice Fairy Cirno [50]
+Hornet (rare) (5%)
+
+(20% invasion by DarkPhantom) [Ice Queen Mask] [+1]
+
+Boss: Player reaches a shiny lake. Cirno Appears.
+
+-----------------------------------------------------------------------------------------
+
+Player goes through jungle and arrives at a Castle
+
+Stage 4 - Drangleic Castle		70/4
+Monsters:				|			Bosses:
+Undead Fat	(35%)					(sub, 50%) Succubus [30]
+Knight		(50%)					Ancient Guardian Drake [60]
+Shadow (rare)	(15%)
+
+(70% invasion by DarkPhantom) [Drangleic Shield] [Unbreakable]
+
+Boss: a large room. Dragon within.
+
+-----------------------------------------------------------------------------------------
+
+Player proceeds through lift, and goes down a cave.
+
+Stage 5 - Old Dwarven Ruins		100/4
+Monsters:				|			Bosses:
+Shadow		(40%)					   (sub) Dark Knight [40]
+Undead Fat	(30%)					   Fire Demon Balrog [100]
+Spider		(30%)
+
+(40% invasion by DarkPhantom) [Mythril Fullplate] [+2]
+
+Boss: Bridge
+
+-----------------------------------------------------------------------------------------
+
+Player reaches a teleport portal. Arrives at undersea palace.
+
+Stage 6 - Ocean Palace			100/5
+Monsters:				|			Bosses:
+Shadow	(45%)						   (sub)Abberation [60]
+Sentry	(50%)							Lavos [Duuh]
+Succubus(rare) (5%)
+Worm (60% at every spawn. Does not add to kill count; if not worm, go to list)
+
+(60% invasion by DarkPhantom) [Charm of magic shield] [Enlarge Current shield]
+
+Boss: Another dimension — lavos realm
+
+—
+
+Endgame
