@@ -16,7 +16,7 @@ Player starts. Arrive at a beach on a forsaken land and delves into jungle.
 
 Stage 1 - Beach Side Woods		30 / 2
 Monsters:				|			Bosses:
-Crab	(50%)						Old Sorcerer Merlingone [20]
+Crab	(50%)						Old Sorcerer Marlingone [20]
 Fly	(40%)
 Bug (rare)  (10%)
 

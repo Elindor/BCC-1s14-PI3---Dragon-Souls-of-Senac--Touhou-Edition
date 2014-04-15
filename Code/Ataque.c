@@ -66,7 +66,7 @@ bool checkAttack(Ataque *attack){
             //if(ponto em X,Y MATRIZ GLOBAL == BRANCA || ponto em X,Y MATRIZ GLOBAL != Shield)
             //ATTACK DAMAAAAGE
             //Hit, sounds, etc...
-            
+                
             
             free(attack);
             return TRUE;
