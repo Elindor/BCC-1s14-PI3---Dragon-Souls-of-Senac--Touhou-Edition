@@ -6,32 +6,30 @@
 
 #include <time.h>
 
-typedef enum ataque{
-    Arrow, Fireball, bla, exemplo4,
-}AttackId;
 
+typedef enum monstro{
+    Crab = 0, Fly = 1, Bug = 2, Fat = 3, Kobold = 4, Worm = 5, Leech = 6, Hornet = 7, UndeadFat = 8, Knight = 9, Shadow = 10, Spider = 11, Sentry = 12
+};
 
 typedef struct _Monster{
     int HP;
-    AttackId ataque;
+    int ataque[2];
+    float cooldown;         // Somar o periodo dos ataques no uso, lembrar de deletar comentário
     ALLEGRO_BITMAP *image;
     float X;
     float Y;
 }Monster;
 
 Monster initWithMonsterNumber(int fase){
-    int number;
-    // temp -- como teriamos um método adequado para geração aleatória dado uma fase
-    number = fase;
-    //
     
-    // number = getId(fase);
+    int monsterId = getId(fase);    //Recebe um ID de monstro gerado aleatóriamente baseado na fase
     
     Monster *monstro = malloc(sizeof(Monster));
-    image = getImage(number);
+    getImage(monsterId, monstro -> image);      // Aloca internamente a imagem do monstro.
     
-    HP = getLife(number);
-    ataque = getAttack(number);
+    monstro -> HP = getLife(monsterId);             //Devolve a vida do monstro
+    monstro -> cooldown = getCooldown(monsterId);   //Devolve o Cooldown do monstro
+    getAttack(monsterId, monstro -> ataque); // Manda pada o Void o ataque e função preenche vetor.
     
     
     return monstro;
@@ -87,32 +85,178 @@ int getId(int fase){       //Recebido uma fase, este método realiza o sorteio a
             if(x < 45)
                 return 11;  // SHADOW
             if(x < 50)
-                return 12;  // SENTRY
-            return 13;      // SUCCUBUS
+                return 13;  // SENTRY
+            return 41;      // SUCCUBUS
             
     }
 }
 
-ALLEGRO_BITMAP getImage(int number){        // Isto procura a imagem de um monstro dado seu id
+ALLEGRO_BITMAP getImage(int number, ALLEGRO_BITMAP image){        // Isto procura a imagem de um monstro dado seu id
     ALLEGRO_BITMAP *Image;
     
-    //Switch case for images
+    Switch(number){
+    case Crab:
+        image = al_load_bitmap("Graphics/Crab.png");
+        return;
+    case Fly:
+        image = al_load_bitmap("Graphics/Fly.png");
+        return;
+    case Bug:
+        image = al_load_bitmap("Graphics/Bug.png");
+        return;
+    case Fat:
+        image = al_load_bitmap("Graphics/Fat.png");
+        return;
+    case Kobold:
+        image = al_load_bitmap("Graphics/Kobold.png");
+        return;
+    case Worm:
+        image = al_load_bitmap("Graphics/Worm.png");
+        return;
+    case Leech:
+        image = al_load_bitmap("Graphics/Leech.png");
+        return;
+    case Hornet:
+        image = al_load_bitmap("Graphics/Hornet.png");
+        return;
+    case UndeadFat:
+        image = al_load_bitmap("Graphics/UndeadFat.png");
+        return;
+    case Knight:
+        image = al_load_bitmap("Graphics/Knight.png");
+        return;
+    case Shadow:
+        image = al_load_bitmap("Graphics/Shadow.png");
+        return;
+    case Spider:
+        image = al_load_bitmap("Graphics/Spider.png");
+        return;
+    case Sentry:
+        image = al_load_bitmap("Graphics/Worm.png");        // MUDAR!!!
+        return;
+    }
     
     return image;
 }
 
 int getLife(int number){        //Este método devolve a vida de um monstro, dado seu id
-    int life;
     
-    //Switch case for lifes
-    
-    return life;
+    Switch(number){
+    case Crab:
+        return 9;
+    case Fly:
+        return 6;
+    case Bug:
+        return 15;
+    case Fat:
+        return 20;
+    case Kobold:
+        return 16;
+    case Worm:
+        return 5;
+    case Leech:
+        return 25;
+    case Hornet:
+        return 30;
+    case UndeadFat:
+        return 60;
+    case Knight:
+        return 36;
+    case Shadow:
+        return 24;
+    case Spider:
+        return 30;
+    case Sentry:
+        return 42;
+    }
 }
 
-int getAttack(int num){      //Este metodo devolve qual ataque o monstro realiza, dado seu id
-    int attack;
+void getAttack(int fase, int *num){      //Este metodo devolve quais ataques o monstro realiza, dado seu id
     
-    //Switch case for attacks
-    
-    return attack;
+    Switch(fase){
+    case Crab:
+        num[0] = 1;
+        num[1] = 1;
+        return;
+    case Fly:
+        num[0] = 2;
+        num[1] = 2;
+        return;
+    case Bug:
+        num[0] = 3;
+        num[1] = 3;
+        return;
+    case Fat:
+        num[0] = 4;
+        num[1] = 4;
+        return;
+    case Kobold:
+        num[0] = 5;
+        num[1] = 4;
+        return;
+    case Worm:
+        num[0] = 6;
+        num[1] = 6;
+        return;
+    case Leech:
+        num[0] = 7;
+        num[1] = 7;
+        return;
+    case Hornet:
+        num[0] = 8;
+        num[1] = 4;
+        return;
+    case UndeadFat:
+        num[0] = 9;
+        num[1] = 4;
+        return;
+    case Knight:
+        num[0] = 9;
+        num[1] = 10;
+        return;
+    case Shadow:
+        num[0] = 11;
+        num[1] = 9;
+        return;
+    case Spider:
+        num[0] = 12;
+        num[1] = 9;
+        return;
+    case Sentry:
+        num[0] = 13;
+        num[1] = 9;
+        return;
+    }
 }
+
+int getCooldown(int num){
+    Switch(num){
+    case Crab:
+        return 8;
+    case Fly:
+        return 4;
+    case Bug:
+        return 3;
+    case Fat:
+        return 3;
+    case Kobold:
+        return 4;
+    case Worm:
+        return 0.8;
+    case Leech:
+        return 3;
+    case Hornet:
+        return 3;
+    case UndeadFat:
+        return 6;
+    case Knight:
+        return 4;
+    case Shadow:
+        return 3;
+    case Spider:
+        return 4;
+    case Sentry:
+        return 1;
+    }
+}
+

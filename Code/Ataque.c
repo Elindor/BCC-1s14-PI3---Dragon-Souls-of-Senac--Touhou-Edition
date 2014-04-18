@@ -5,6 +5,9 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 
+typedef enum strike{
+    Pincer = 1, Spit = 2, Needle = 3, Cut = 4, SpearThrow = 5, MagicMissiles = 6, Spores = 7, Needle = 8, Cut2 = 9, Omnicut = 10, Curse = 11, Web = 12, Fireball = 13
+};
 
 typedef struct _Ataque{
     float X0;
@@ -87,7 +90,15 @@ ALLEGRO_BITMAP getImage(int number, X0, Y0, X, Y){        // Isto procura a imag
 int getDamage(int number){        //Este método devolve o dano de um ataque, dado seu id.
     int damage;
     
-    //Switch case for damages
+    Switch(number){
+    case 0:
+        
+    case 1:
+        
+    case2:
+        
+        
+    }
     
     return damage;
 }
