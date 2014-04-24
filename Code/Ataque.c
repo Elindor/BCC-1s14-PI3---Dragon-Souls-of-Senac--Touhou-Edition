@@ -16,9 +16,10 @@ typedef struct _Ataque{
     float Y;
     int damage;
     int currentDuration;
-    int preAnimationTime;
-    int duration;
+    float preAnimationTime;
+    float duration;
     ALLEGRO_BITMAP *image;
+    int id;
 
 }Ataque;
 
@@ -28,7 +29,7 @@ typedef struct _Ataque{
     ataque -> X0 = senderX;
     ataque -> Y0 = senderY;
     ataque -> preAnimationTime = 0;
-    
+    ataque -> id = attackId;
     
     ///
     // Adicionar sistema para geração de (X,Y) finais.
@@ -83,30 +84,98 @@ ALLEGRO_BITMAP getImage(int number, X0, Y0, X, Y){        // Isto procura a imag
     ALLEGRO_BITMAP *Image;
     
     //Switch case for images
+    Switch(number){
+    case Pincer:
+        
+    case Spit:
+        
+    case Needle:
+        
+    case Cut:
+        
+    case SpearThrow:
+        
+    case MagicMissiles:
+        
+    case Spores:
+        
+    case Needle:
+        
+    case Cut2:
+        
+    case Omnicut:
+        
+    case Curse:
+        
+    case Web:
+        
+    case Fireball:
+        
+    }
     
     return image;
 }
 
 int getDamage(int number){        //Este método devolve o dano de um ataque, dado seu id.
-    int damage;
     
     Switch(number){
-    case 0:
-        
-    case 1:
-        
-    case2:
-        
-        
+    case Pincer:
+        return 4;
+    case Spit:
+        return 7;
+    case Needle:
+        return 15;
+    case Cut:
+        return 6;
+    case SpearThrow:
+        return 8;
+    case MagicMissiles:
+        return 3;
+    case Spores:
+        return 2;
+    case Needle:
+        return 15;
+    case Cut2:
+        return 11;
+    case Omnicut:
+        return 8;
+    case Curse:
+        return 5;
+    case Web:
+        return 0;
+    case Fireball:
+        return 10;
     }
-    
-    return damage;
 }
 
-int getDuration(int num){      //Este metodo devolve qual o tempo de animação do ataque.
-    int time;
-    
-    //Switch case for attacks
-    
-    return time;
+float getDuration(int num){      //Este metodo devolve qual o tempo de animação do ataque.
+
+    Switch(number){
+    case Pincer:
+        return 2;
+    case Spit:
+        return 4;
+    case Needle:
+        return 2;
+    case Cut:
+        return 2;
+    case SpearThrow:
+        return 1;
+    case MagicMissiles:
+        return 1;
+    case Spores:
+        return 2;
+    case Needle:
+        return 0.3;
+    case Cut2:
+        return 2;
+    case Omnicut:
+        return 3;
+    case Curse:
+        return 2;
+    case Web:
+        return 1.5;
+    case Fireball:
+        return 2;
+    }
 }
