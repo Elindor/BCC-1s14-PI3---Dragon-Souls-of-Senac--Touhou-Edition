@@ -20,7 +20,14 @@ typedef struct _Monster{
     float Y;
 }Monster;
 
-Monster initWithMonsterNumber(int fase){
+typedef struct _noMonster{
+    noMonster* prox;
+    Monster* monster;
+}oMonster;
+
+
+
+Monster* initWithMonsterNumber(int fase){
     
     int monsterId = getId(fase);    //Recebe um ID de monstro gerado aleatóriamente baseado na fase
     

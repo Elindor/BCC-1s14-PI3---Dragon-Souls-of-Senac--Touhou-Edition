@@ -11,6 +11,13 @@
 
 #define FPS 60
 
+typedef struct _multiList{
+    noAtaque* primeiroAtaque;
+    noMonster* primeiroMonstro;
+}multiList;
+
+
+
 /*///////////////////////////////////////////////////////////////////////////
 //                Bob.0.0      Glossário - Atalhos
 //************************************************************************//*
@@ -42,7 +49,11 @@
 //
 //
 //
-//      Looping break / Finalização . . . . . . . . . . . . . . . . 9.0
+//      Looping break / Finalização . . . . . . . . . . . . . . . . 8.0
+//
+//
+//
+//      Other Functions . . . . . . . . . . . . . . . . . . . . . . 9.0
 //
 //
 //////////////////////////////////////////////////////////////////////////*/
@@ -55,7 +66,7 @@ void erro(char *mensagem) {
 }
 
 
-int main() {
+int game() {
     
     /***********************************************************************/
     //       Bob.1.0   Inicialização da camera e allegro                   //
@@ -126,6 +137,7 @@ int main() {
     int cycle = 0;
     int hitx = rand() % (largura/2);
     int hity = rand() % (altura/2);
+    int currentStage;
 
     /***********************************************************************/
     //       Bob.3.0                  LOOPING                              //
@@ -170,7 +182,7 @@ int main() {
     
     
     /***********************************************************************/
-    //   Bob.9.0      LOOPING BREAK -- Starting shutdown                   //
+    //   Bob.8.0      LOOPING BREAK -- Starting shutdown                   //
     /***********************************************************************/
 
     al_destroy_bitmap(direita);
@@ -198,3 +210,67 @@ int main() {
 
     return EXIT_SUCCESS;
 }
+
+/***********************************************************************/
+//   Bob.9.0      Other Functions -- reserved for required here only   //
+/***********************************************************************/
+
+// Bob.9.1 - spawnMonster
+
+void spawnMonster(int currentStage, multiList* lista){
+    Monster* minion = initWithMonsterNumber(currentStage);
+    
+    noMonster* m = malloc(sizeof(noMonster));
+    m -> monster = minion;
+    m -> prox = NULL;
+
+    //Procura lugar na lista
+    if(lista -> primeiroMonstro == NULL){
+        lista -> primeiroMonstro = m;
+        return;
+    }
+    noMonster* temp;
+    temp = lista -> primeiroMonstro;
+    
+    while (temp -> prox != NULL) {
+        temp = temp -> prox;
+    }
+    
+    temp -> prox = m;
+}
+
+void beginAttack(int *attackNumber, int X0, int Y0, multiList* lista){
+    int chosenAttack;
+    int randomizer = (rand() % 60) % 4;
+    if(randomizer != 0)
+        chosenAttack = attackNumber[0];
+    else
+        chosenAttack = attackNumber[1];
+    
+
+    Ataque* novoAtaque = initWithAttackNumber(chosenAttack, X0, Y0);
+    
+    noAtaque* a = malloc(sizeof(Ataque));
+    a -> attack = novoAtaque;
+    a -> prox = NULL;
+    
+    //procura lugar na lista
+    if(lista -> primeiroAtaque == NULL){
+        lista -> primeiroAtaque = a;
+        return;
+    }
+    noAtaque* temp;
+    temp = lista -> primeiroAtaque;
+    
+    while (temp -> prox != NULL) {
+        temp = temp -> prox;
+    }
+    
+    temp -> prox = a;
+    
+}
+
+
+
+
+

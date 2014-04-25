@@ -23,6 +23,12 @@ typedef struct _Ataque{
 
 }Ataque;
 
+typedef struct _noAtaque{
+    noAtaque* prox;
+    Ataque* attack;
+}noAtaque;
+
+
 *Ataque initWithAttackNumber(int attackId, int senderX, int senderY){
     Ataque *ataque = malloc(sizeof(Ataque));
     

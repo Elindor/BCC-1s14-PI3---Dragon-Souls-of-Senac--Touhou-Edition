@@ -1,0 +1,176 @@
+ENEMY DATABASE
+
+First Monster, then Phantoms, Then Bosses.
+
+Name [id]
+HP
+Attack list: [attack one, attack two] (If the same, they are the same) [75%, 25%] <- execution chance
+Cooldown (Time between attacks)
+Summon List? (For bosses)
+
+starting attack: 3
+ending possible attack: 8
+
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+Crab [01]
+HP:9
+Attack List: 1Pincer (Melee - Sprite, 2seg, 4 damage), Pincer
+Cooldown:8 seg
+
+Fly [02]
+HP:6
+Attack List: 2Spit (Ranged - Aimed, 4 seg, 7 damage), Spit
+Cooldown: 4 seg
+
+Bug [03]
+HP:15
+Attack List: 3Needle (Ranged - Aimed, 2 seg, 15 damage)
+Cooldown: 3 seg
+
+Fat [04]
+HP:20
+Attack List: 4Cut (Melee - Sprite, 2 seg, 6 damage), Cut
+Cooldown: 3 seg
+
+Kobold [05]
+HP:16
+Attack List: 5SpearThrow (Ranged - aimed, 1 seg, 8 damage), Cut
+Cooldown: 4 seg
+
+Worm [06]
+HP: 5
+Attack List: 6MagicMissiles (Ranged - Aimed, 1 seg, 3 damage), MagicMissiles
+Cooldown: 0.8
+
+Leech [07]
+HP:25
+Attack List: 7Spores (4 Ranged - Random at radius, 2 seg, 2 damage), Spores
+Cooldown: 3 seg
+
+Hornet [08]
+HP:30
+Attack List: 8Needle (ranged - aimed, 0.3 seg, 15 damage), Cut
+Cooldown: 3 seg
+
+Undead fat [09]
+HP:60
+Attack List: 9Cut2 (Melee - Sprite, 2 seg, 11 damage), Cut
+Cooldown: 6 seg
+
+Knight [10]
+HP: 36
+Attack List: Cut2, 10OmniCut (Melee - Screen, 3 seg, 8 damage)
+Cooldown: 4
+
+Shadow [11]
+HP: 24
+Attack List: 11Curse (6 Ranged - Random, 2 seg, 5 damage), Cut2
+Cooldown: 3
+
+Spider [12]
+HP:30
+Attack List: 12Web (Ranged - aimed, 1.5 seg, stun [2 seg] ), Cut2
+Cooldown:4
+
+Sentry [13]
+HP:42
+Attack List: 13Fireball (Ranged - aimed (Homing?), 2, 10 damage), cut2
+Cooldown:1
+
+
+--------------------------------------------------------------------------------------------------------------
+						PHANTOMS
+--------------------------------------------------------------------------------------------------------------
+
+Dark Phantom ? [22]
+HP:
+Attack List:
+Cooldown:
+
+Dark Phantom ? [23]
+HP:
+Attack List:
+Cooldown:
+
+Dark Phantom ? [24]
+HP:
+Attack List:
+Cooldown:
+
+Dark Phantom ? [25]
+HP:
+Attack List:
+Cooldown:
+
+Dark Phantom ? [26]
+HP:
+Attack List:
+Cooldown:
+
+
+--------------------------------------------------------------------------------------------------------------
+						BOSSES
+--------------------------------------------------------------------------------------------------------------
+
+
+Old Sorcerer Marlingone [11]
+HP:60
+Attack List: MUAHAHA[side] (Ranged - aimed & hor, 3 seg, 20 damage), MUAHAHA[front] (Melee - Global, 3 seg, 20 damage)
+Cooldown:1
+Summon List: None
+
+Troll Chieftain Huehueda [21]
+HP:100
+Attack List: cut2, SpearThrow
+Cooldown: 1
+Summon List: Kobold
+
+Flower [31]
+HP:100
+Attack List: spores2 (4 Ranged - Random at radius & 4 random further distance, 2 seg & 3 seg, 4 damage), spores
+Cooldown: 0.2
+Summon List:Worm
+
+Ice Fairy Cirno [32]
+HP:150
+Attack List:
+Cooldown:
+Summon List:
+
+Succubus [41]
+HP:120
+Attack List: Curse, Drain Life (Ranged - Aimed, 1 seg, 4 damage & 20 heal)
+Cooldown:2
+Summon List:
+
+Guardian Dragon [42]
+HP:250
+Attack List: DoubleFireball(2 Ranged - Aimed, 1 seg, 40 damage), Firebreath (10 ranged sidebyside, 1 to 4 seg, 15 damage each)
+Cooldown:5
+Summon List:None
+
+Dark Knight [51]
+HP:100
+Attack List: Cut2, Curse
+Cooldown:0.1
+Summon List: Shadow
+
+Fire Demon Balrog [52]
+HP:450
+Attack List: cut3 (Melee - Sprite, 2 seg, 18 damage), FireWhip (creates a line on screen, touching damages 1 per second)
+Cooldown:
+Summon List:
+
+Abberation [61]
+HP:220
+Attack List: Curse, MagicBurst (15 ranged - random, 1~3 sec, 8 damage)
+Cooldown:
+Summon List:
+
+Lavos [62]
+HP:800
+Attack List:
+Cooldown:
+Summon List:
