@@ -43,7 +43,7 @@ int main() {
   if(!timer)
     erro("erro na criacao do relogio\n");
 
-  ALLEGRO_DISPLAY *display = al_create_display(largura, altura/2);
+  ALLEGRO_DISPLAY *display = al_create_display(largura, altura);
   if(!display)
     erro("erro na criacao da janela\n");
 
@@ -69,11 +69,11 @@ int main() {
   ALLEGRO_BITMAP *buffer = al_get_backbuffer(display);
 
   //tela exibindo img normal
-  ALLEGRO_BITMAP *esquerda = al_create_sub_bitmap(buffer, 0, 0, largura/2, altura/2);
+  ALLEGRO_BITMAP *esquerda = al_create_sub_bitmap(buffer, 0, 0, largura, altura);
 
   //tela mostrando como o computador enxerga
   //ALLEGRO_BITMAP *direita = al_create_sub_bitmap(buffer, largura/2, 0, largura/2, altura/2);
-  ALLEGRO_BITMAP *silhueta = al_create_bitmap(largura/2, altura/2);
+  ALLEGRO_BITMAP *silhueta = al_create_bitmap(largura, altura);
 
   /**********/
   srand(time(NULL));
@@ -83,8 +83,8 @@ int main() {
   int makeOnce = 1;
 
   int cycle = 0;
-  int hitx = rand() % (largura/2);
-  int hity = rand() % (altura/2);
+  int hitx = rand() % (largura);
+  int hity = rand() % (altura);
 
 
   //gameloop
@@ -152,7 +152,7 @@ int main() {
               cnr++;
             }
 
-          //Silhueta Refinar!
+          //Silhueta (REFINAR!!!)
           int r2 = matrizFiltro[y][x][0];
           int g2 = matrizFiltro[y][x][1];
           int b2 = matrizFiltro[y][x][2];
@@ -161,15 +161,25 @@ int main() {
           float h2, s2, v2;
           rgbToHsv(r2, g2, b2, &h2, &s2, &v2);
 
-          if(h - h2 > 90 || h - h2 < -90)
+          float dh, ds, dv;
+
+          dh = h - h2;
+          if(dh < 0)
+            dh = -dh;
+
+          ds = s - s2;
+          if(ds < 0)
+            ds = -ds;
+
+          dv = v - v2;
+          if(dv < 0)
+            dv = -dv;
+
+          if(dv > 25){
             token = 0;
-          if(s - s2 > 50 || s - s2 < -50)
-              token = 0;
-          if(v - v2 > 50 || v - v2 < -50)
-              token = 0;
+          }
 
           if(!token) {
-
             matriz[y][x][0] = 255;
             matriz[y][x][1] = 255;
             matriz[y][x][2] = 255;
@@ -206,14 +216,20 @@ int main() {
             matriz[y][x][2] = 0;
           }
 
-          if(b > r + g + 15){
-            by +=y;
-            bx += x;
-            bn++;
+          float h, s, v;
 
-            matriz[y][x][0] = 255;
-            matriz[y][x][1] = 255;
-            matriz[y][x][2] = 255;
+          rgbToHsv(r, g, b, &h, &s, &v);
+
+          if(h < 135 && h > 105){
+            if(s > 35){
+              by += y;
+              bx += x;
+              bn++;
+
+              matriz[y][x][0] = 255;
+              matriz[y][x][1] = 255;
+              matriz[y][x][2] = 255;
+            }
           }
         }
 
@@ -241,8 +257,14 @@ int main() {
       /**********/
       camera_copia(cam, cam->quadro, esquerda);
 
+      //Copia img editada na img direita
+      camera_copia(cam, matriz, silhueta);
+      al_convert_mask_to_alpha(silhueta, al_map_rgb(0, 0, 0));
+      al_draw_bitmap(silhueta, 0, 0, 0);
+      /**********/
+
       if(bn > 0)
-        al_draw_circle(bx / 2 / bn, by / 2 / bn, 100, al_map_rgb(0, 0, 255), 1);
+        al_draw_circle(bx / bn, by / bn, 100, al_map_rgb(0, 0, 255), 1);
 
       if(cycle >= 40){
         if(cycle < 48){
@@ -255,7 +277,7 @@ int main() {
       }
 
       if(cnr > 10){
-        al_draw_circle(cxr / cnr / 2, cyr / cnr / 2, 100, al_map_rgb(255, 0, 0), 1);
+        al_draw_circle(cxr / cnr, cyr / cnr, 100, al_map_rgb(255, 0, 0), 1);
 
         insere(f, cxr/cnr, cyr/cnr);
 
@@ -264,12 +286,6 @@ int main() {
       }
 
       drawAtk(f);
-
-			//Copia img editada na img direita
-      camera_copia(cam, matriz, silhueta);
-      al_convert_mask_to_alpha(silhueta, al_map_rgb(0, 0, 0));
-      al_draw_bitmap(silhueta, 0, 0, 0);
-      /**********/
 
       al_flip_display();
     }
@@ -317,7 +333,7 @@ void drawAtk(fila *f){
     int alpha = 0;
 
     while(e1 != NULL && e2 != NULL){
-      al_draw_line(e1->x/2, e1->y/2, e2->x/2, e2->y/2, al_map_rgba(255, 0, 0, alpha), 3);
+      al_draw_line(e1->x, e1->y, e2->x, e2->y, al_map_rgba(255, 0, 0, alpha), 3);
       e1 = e2;
       e2 = e2->prox;
 

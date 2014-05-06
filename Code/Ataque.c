@@ -14,11 +14,14 @@ typedef struct _Ataque{
     float Y0;
     float X;
     float Y;
+    float targetX;
+    float targetY;
     int damage;
     int currentDuration;
     float preAnimationTime;
     float duration;
     ALLEGRO_BITMAP *image;
+    float angle;
     int id;
 
 }Ataque;
@@ -57,9 +60,17 @@ typedef struct _noAtaque{
 
     image = getImage(attackId, ataque -> X0, ataque -> Y0, ataque -> X, ataque -> Y);
     
+    
+    
     ataque -> duration = getDuration(attackId);
     ataque -> damage = getDamage(attackId);
     
+    // Realiza a inclinação
+    float tempAngle = atan2( (attack->targetY - attack->Y0), (attack->targetX - attack->X0) );
+    ataque -> angle = tempAngle * 3.14 / 180.0;
+    
+    // Desenha no primeiro frame
+    al_draw_rotated_bitmap(attack -> image, attack -> X, attack -> Y, attack -> X, attack -> Y, attack ->angle, 0);
     
     return ataque;
 }
@@ -72,6 +83,14 @@ bool checkAttack(Ataque *attack){
         if(attack -> currentDuration != attack -> duration)
             attack -> currentDuration++;
         else{
+            
+            attack -> X = attack -> X0 + ( ( (attack -> targetX - attack -> X0) / attack -> duration) * attack -> currentDuration);
+            attack -> Y = attack -> Y0 + ( ( (attack -> targetY - attack -> Y0) / attack -> duration) * attack -> currentDuration);
+            
+            
+            
+            al_draw_rotated_bitmap(attack -> image, attack -> X, attack -> Y, attack -> X, attack -> Y, attack ->angle, 0);
+            /*al_draw_rotated_bitmap(ALLEGRO_BITMAP *bitmap, float cx, float cy, float dx, float dy, float angle, int flags);*/
             
             //if(ponto em X,Y MATRIZ GLOBAL == BRANCA || ponto em X,Y MATRIZ GLOBAL != Shield)
             //ATTACK DAMAAAAGE

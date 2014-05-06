@@ -70,10 +70,10 @@ void camera_copia(camera *cam, unsigned char ***matriz, ALLEGRO_BITMAP *bitmap) 
 
   char *row = region->data;
 
-  for(int y = 0; y < cam->altura; y += 2) {
+  for(int y = 0; y < cam->altura; y++) {
     char *pixel = row;
 
-    for(int x = 0; x < cam->largura; x += 2) {
+    for(int x = 0; x < cam->largura; x++) {
       *pixel = matriz[y][x][2];
       pixel++;
 
