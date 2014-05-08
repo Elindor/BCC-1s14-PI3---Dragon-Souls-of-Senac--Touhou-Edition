@@ -99,51 +99,82 @@ int getId(int fase){       //Recebido uma fase, este método realiza o sorteio a
 }
 
 ALLEGRO_BITMAP getImage(int number, ALLEGRO_BITMAP image){        // Isto procura a imagem de um monstro dado seu id
-    ALLEGRO_BITMAP *Image;
+
+    char nome[40], temp[20];
+    int width, height;
+
     
     Switch(number){
     case Crab:
-        image = al_load_bitmap("Graphics/Crab.png");
-        return;
+        sprintf (temp, "Crab");
+        width = 179;
+        height = 100;
+        break;
     case Fly:
-        image = al_load_bitmap("Graphics/Fly.png");
-        return;
+        sprintf (temp, "Fly");
+        width = 168;
+        height = 180;
+        break;
     case Bug:
-        image = al_load_bitmap("Graphics/Bug.png");
-        return;
+        sprintf (temp, "Bug");
+        width = 250;
+        height = 179;
+        break;
     case Fat:
-        image = al_load_bitmap("Graphics/Fat.png");
-        return;
+        sprintf (temp, "Fat");
+        width = 166;
+        height = 270;
+        break;
     case Kobold:
-        image = al_load_bitmap("Graphics/Kobold.png");
-        return;
+        sprintf (temp, "Kobold");
+        width = 187;
+        height = 195;
+        break;
     case Worm:
-        image = al_load_bitmap("Graphics/Worm.png");
-        return;
+        sprintf (temp, "Worm");
+        width = 101;
+        height = 100;
+        break;
     case Leech:
-        image = al_load_bitmap("Graphics/Leech.png");
-        return;
+        sprintf (temp, "Leech");
+        width = 202;
+        height = 220;
+        break;
     case Hornet:
-        image = al_load_bitmap("Graphics/Hornet.png");
-        return;
+        sprintf (temp, "Hornet");
+        width = 138;
+        height = 190;
+        break;
     case UndeadFat:
-        image = al_load_bitmap("Graphics/UndeadFat.png");
-        return;
+        sprintf (temp, "UndeadFat");
+        width = 205;
+        height = 260;
+        break;
     case Knight:
-        image = al_load_bitmap("Graphics/Knight.png");
-        return;
+        sprintf (temp, "Knight");
+        width = 162;
+        height = 190;
+        break;
     case Shadow:
-        image = al_load_bitmap("Graphics/Shadow.png");
-        return;
+        sprintf (temp, "Shadow");
+        width = 115;
+        height = 192;
+        break;
     case Spider:
-        image = al_load_bitmap("Graphics/Spider.png");
-        return;
+        sprintf (temp, "Spider");
+        width = 287;
+        height = 200;
+        break;
     case Sentry:
-        image = al_load_bitmap("Graphics/Worm.png");        // MUDAR!!!
-        return;
+        sprintf (temp, "Sentry");
+        width = 0;
+        height = 0;
+        break;
     }
     
-    return image;
+    image = al_create_bitmap(width, height);
+    sprintf (nome, "Graphics/%s.png", temp);
+    image = al_load_bitmap(nome);
 }
 
 int getLife(int number){        //Este método devolve a vida de um monstro, dado seu id
