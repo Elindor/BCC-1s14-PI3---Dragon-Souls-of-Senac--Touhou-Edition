@@ -6,7 +6,7 @@
 #include <allegro5/allegro_primitives.h>
 
 typedef enum strike{
-    Pincer = 1, Spit = 2, Needle = 3, Cut = 4, SpearThrow = 5, MagicMissiles = 6, Spores = 7, Needle = 8, Cut2 = 9, Omnicut = 10, Curse = 11, Web = 12, Fireball = 13
+    Pincer = 1, Spit = 2, Needle = 3, Cut = 4, SpearThrow = 5, MagicMissiles = 6, Spores = 7, Needle2 = 8, Cut2 = 9, Omnicut = 10, Curse = 11, Web = 12, Fireball = 13
 };
 
 typedef struct _Ataque{
@@ -58,9 +58,7 @@ typedef struct _noAtaque{
 
     ataque -> currentDuration = 0;
 
-    image = getImage(attackId, ataque -> X0, ataque -> Y0, ataque -> X, ataque -> Y);
-    
-    
+    getImage(attackId, ataque -> image);
     
     ataque -> duration = getDuration(attackId);
     ataque -> damage = getDamage(attackId);
@@ -105,40 +103,73 @@ bool checkAttack(Ataque *attack){
 }
 
 
-ALLEGRO_BITMAP getImage(int number, X0, Y0, X, Y){        // Isto procura a imagem de um ataque dado seu id.
-    ALLEGRO_BITMAP *Image;
+void getImage(int number, ALLEGRO_BITMAP *image;){        // Isto procura a imagem de um ataque dado seu id.
+
+    
+    char nome[40], temp[20];
+    int width, height;
     
     //Switch case for images
     Switch(number){
     case Pincer:
-        
+        sprintf (temp, "Pincer");
+        width = height = 75;
+        break;
     case Spit:
-        
+        sprintf (temp, "Spit");
+        width = height = 50;
+        break;
     case Needle:
-        
+        sprintf (temp, "Needle");
+        width = 60;
+        height = 35;
+        break;
     case Cut:
-        
+        sprintf (temp, "Cut");
+        width = height = 75;
+        break;
     case SpearThrow:
-        
+        sprintf (temp, "SpearThrow");
+        width = 75;
+        height = 10;
+        break;
     case MagicMissiles:
-        
+        sprintf (temp, "MagicMissiles");
+        width = height = 50;
+        break;
     case Spores:
-        
-    case Needle:
-        
+        sprintf (temp, "Spores");
+        width = height = 50;
+        break;
+    case Needle2:
+        sprintf (temp, "Needle");
+        width = 60;
+        height = 35;
+        break;
     case Cut2:
-        
+        sprintf (temp, "Cut2");
+        width = height = 75;
+        break;
     case Omnicut:
-        
+        sprintf (temp, "Omnicut");
+        width = height = 75;
+        break;
     case Curse:
-        
+        sprintf (temp, "Curse");
+        width = height = 50;
+        break;
     case Web:
-        
+        sprintf (temp, "Web");
+        width = height = 50;
+        break;
     case Fireball:
-        
+        sprintf (temp, "Fireball");
+        width = height = 70;
+        break;
     }
-    
-    return image;
+    image = al_create_bitmap(width, height);
+    sprintf (nome, "Graphics/%s.png", temp);
+    image = al_load_bitmap(nome);
 }
 
 int getDamage(int number){        //Este método devolve o dano de um ataque, dado seu id.
@@ -158,7 +189,7 @@ int getDamage(int number){        //Este método devolve o dano de um ataque, da
         return 3;
     case Spores:
         return 2;
-    case Needle:
+    case Needle2:
         return 15;
     case Cut2:
         return 11;
@@ -190,7 +221,7 @@ float getDuration(int num){      //Este metodo devolve qual o tempo de animaçã
         return 1;
     case Spores:
         return 2;
-    case Needle:
+    case Needle2:
         return 0.3;
     case Cut2:
         return 2;
