@@ -80,31 +80,12 @@ int main() {
   int desenhar = 0;
   int terminar = 0;
 
-  //int makeOnce = 1;
-
   int cycle = 0;
   int hitx = rand() % (largura);
   int hity = rand() % (altura);
 
-  double value;
-  int dist;
-
   int x, y;
 
-  float cyr = 0;  //Soma dos valores y dos pontos considerados pelo computador
-  float cxr = 0;  //Soma dos valores x dos pontos considerados pelo computador
-  int cnr = 0;    //Qtde de pontos considerados
-
-  int bx = 0;
-  int by = 0;
-  int bn = 0;
-
-  int r, g, b, r2, g2, b2;
-  float h, s, v, h2, s2, v2, dh, ds, dv;
-
-  int token;
-
-  //Captura de tela inicial
   for(y = 0; y < altura; y++)
     for(x = 0; x < largura; x++){
       matrizFiltro[y][x][0] = cam->quadro[y][x][0];
@@ -142,12 +123,20 @@ int main() {
 
       /**********/
 
+      float cyr = 0;  //Soma dos valores y dos pontos considerados pelo computador
+      float cxr = 0;  //Soma dos valores x dos pontos considerados pelo computador
+      int cnr = 0;    //Qtde de pontos considerados
+
+      int bx, by, bn;
+
       for(y = 0; y < altura; y++){
         for(x = 0; x < largura; x++){
           //Espada
-          r = cam->quadro[y][x][0];
-          g = cam->quadro[y][x][1];
-          b = cam->quadro[y][x][2];
+          int r = cam->quadro[y][x][0];
+          int g = cam->quadro[y][x][1];
+          int b = cam->quadro[y][x][2];
+
+          float h, s, v;
 
           rgbToHsv(r, g, b, &h, &s, &v);
 
@@ -158,28 +147,17 @@ int main() {
               cnr++;
             }
 
-          //Escudo
-          if(h < 135 && h > 105){
-            if(s > 35){
-              by += y;
-              bx += x;
-              bn++;
-
-              matriz[y][x][0] = 255;
-              matriz[y][x][1] = 255;
-              matriz[y][x][2] = 255;
-            }
-          }
-
           //Silhueta (REFINAR!!!)
-          r2 = matrizFiltro[y][x][0];
-          g2 = matrizFiltro[y][x][1];
-          b2 = matrizFiltro[y][x][2];
-          token = 1;
+          int r2 = matrizFiltro[y][x][0];
+          int g2 = matrizFiltro[y][x][1];
+          int b2 = matrizFiltro[y][x][2];
+          int token = 1;
 
+          float h2, s2, v2;
           rgbToHsv(r2, g2, b2, &h2, &s2, &v2);
 
-          //Experimentar com dh(lembrar de regularizar h ou h2 > 180) e ds
+          float dh, ds, dv;
+
           dh = h - h2;
           if(dh < 0)
             dh = -dh;
@@ -210,14 +188,13 @@ int main() {
         }
       }
 
-      //Refinamento de silhueta
-      /*for(y = 1; y < altura-1; y++)
+     /*for(y = 1; y < altura-1; y++)
         for(x = 1; x < largura-1; x++){
-          r = cam->quadro[y][x][0];
-          g = cam->quadro[y][x][1];
-          b = cam->quadro[y][x][2];
+          int r = cam->quadro[y][x][0];
+          int g = cam->quadro[y][x][1];
+          int b = cam->quadro[y][x][2];
 
-          token = 4;
+          int token = 4;
 
           if(255 != matriz[y+1][x][0])
             token--;
@@ -233,12 +210,28 @@ int main() {
             matriz[y][x][1] = 0;
             matriz[y][x][2] = 0;
           }
+
+          float h, s, v;
+
+          rgbToHsv(r, g, b, &h, &s, &v);
+
+          if(h < 135 && h > 105){
+            if(s > 35){
+              by += y;
+              bx += x;
+              bn++;
+
+              matriz[y][x][0] = 255;
+              matriz[y][x][1] = 255;
+              matriz[y][x][2] = 255;
+            }
+          }
         }*/
 
       cycle++;
       if(cycle > 50){
-        value = (pow(hitx - (bx / 2 /bn), 2) + pow(hity - (by / 2 / bn), 2));
-        dist = sqrt(value) - 7;
+        double value = (pow(hitx - (bx / 2 /bn), 2) + pow(hity - (by / 2 / bn), 2));
+        int dist = sqrt(value) - 7;
 
         if(dist < 100 && dist > -100 && bn > 0)
           printf("block!\n");
