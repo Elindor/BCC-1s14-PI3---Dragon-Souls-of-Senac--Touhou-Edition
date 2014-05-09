@@ -27,12 +27,31 @@ typedef struct _noMonster{
 
 
 
-Monster* initWithMonsterNumber(int fase){
+Monster* initWithMonsterNumber(int fase, float altura){
     
     int monsterId = getId(fase);    //Recebe um ID de monstro gerado aleatóriamente baseado na fase
-    
     Monster *monstro = malloc(sizeof(Monster));
+    
+    
+    int random = rand()%180;    // X é definido aleatóriamente (lado ou não lado?)
+    random = random % 2;
+    if(random = 1)
+        monstro -> X = -200;
+    else
+        monstro -> X = +200;
+    
+    
+    if(monsterId == 1 || monsterId == 4 || monsterId == 5 || monsterId == 9 || monsterId == 10){ // Meele Monster
+        monstro -> y =
+    }
+    else{
+        monstro -> y =
+    }
+    
+    
+    
     getImage(monsterId, monstro -> image);      // Aloca internamente a imagem do monstro.
+    
     
     monstro -> HP = getLife(monsterId);             //Devolve a vida do monstro
     monstro -> cooldown = getCooldown(monsterId);   //Devolve o Cooldown do monstro
@@ -85,10 +104,10 @@ int getId(int fase){       //Recebido uma fase, este método realiza o sorteio a
             
         case 6:
             if(x < 60)
-                return 0;   // FALSE_WORM
-                
-            x = rand()%100; // Not false worm >> Then spawn real monster
-                
+                return 6;   // WORM
+            
+            x = rand()%100; // Not worm >> Then spawn real monster
+            
             if(x < 45)
                 return 11;  // SHADOW
             if(x < 50)
@@ -99,10 +118,10 @@ int getId(int fase){       //Recebido uma fase, este método realiza o sorteio a
 }
 
 ALLEGRO_BITMAP getImage(int number, ALLEGRO_BITMAP image){        // Isto procura a imagem de um monstro dado seu id
-
+    
     char nome[40], temp[20];
     int width, height;
-
+    
     
     Switch(number){
     case Crab:
@@ -297,4 +316,3 @@ int getCooldown(int num){
         return 1;
     }
 }
-
