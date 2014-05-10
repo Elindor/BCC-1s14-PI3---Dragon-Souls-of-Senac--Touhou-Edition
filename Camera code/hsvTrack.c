@@ -19,7 +19,7 @@ void erro(char *mensagem) {
 
 void drawAtk(fila *f);
 
-void rgbToHsv(int r, int g, int b, float *h, float *s, float *v);
+void rgbToHsv(int r, int g, int b, int *h, int *s, int *v);
 
 int main() {
   //inicialização
@@ -86,11 +86,27 @@ int main() {
 
   int x, y;
 
+  float cyr, cxr, cnr, lastCx, lastCy;
+
+  int r, g, b, r2, g2, b2;
+
+  int h, s, v, h2, s2, v2;
+
+  int dh, ds, dv;
+
+  int token;
+
+  double value;
+  int dist;
+
   for(y = 0; y < altura; y++)
     for(x = 0; x < largura; x++){
       matrizFiltro[y][x][0] = cam->quadro[y][x][0];
       matrizFiltro[y][x][1] = cam->quadro[y][x][1];
       matrizFiltro[y][x][2] = cam->quadro[y][x][2];
+
+      rgbToHsv(matrizFiltro[y][x][0], matrizFiltro[y][x][1], matrizFiltro[y][x][2], 
+        (int *)&matrizFiltro[y][x][0], (int *)&matrizFiltro[y][x][1], (int *)&matrizFiltro[y][x][2]);
     }
 
   //gameloop
@@ -123,20 +139,18 @@ int main() {
 
       /**********/
 
-      float cyr = 0;  //Soma dos valores y dos pontos considerados pelo computador
-      float cxr = 0;  //Soma dos valores x dos pontos considerados pelo computador
-      int cnr = 0;    //Qtde de pontos considerados
-
       int bx, by, bn;
+
+      cyr = 0;
+      cxr = 0;
+      cnr = 0;
 
       for(y = 0; y < altura; y++){
         for(x = 0; x < largura; x++){
           //Espada
-          int r = cam->quadro[y][x][0];
-          int g = cam->quadro[y][x][1];
-          int b = cam->quadro[y][x][2];
-
-          float h, s, v;
+          r = cam->quadro[y][x][0];
+          g = cam->quadro[y][x][1];
+          b = cam->quadro[y][x][2];
 
           rgbToHsv(r, g, b, &h, &s, &v);
 
@@ -148,43 +162,46 @@ int main() {
             }
 
           //Silhueta (REFINAR!!!)
-          int r2 = matrizFiltro[y][x][0];
-          int g2 = matrizFiltro[y][x][1];
-          int b2 = matrizFiltro[y][x][2];
-          int token = 1;
+          if(h > 180)
+            h -= 180;
 
-          float h2, s2, v2;
-          rgbToHsv(r2, g2, b2, &h2, &s2, &v2);
+          if(matrizFiltro[y][x][0] > 180)
+            matrizFiltro[y][x][0] -= 180;
 
-          float dh, ds, dv;
-
-          dh = h - h2;
+          dh = h - matrizFiltro[y][x][0];
           if(dh < 0)
             dh = -dh;
 
-          ds = s - s2;
+          ds = s - matrizFiltro[y][x][1];
           if(ds < 0)
             ds = -ds;
 
-          dv = v - v2;
+          dv = v - matrizFiltro[y][x][2];
           if(dv < 0)
             dv = -dv;
 
           if(dv > 25){
-            token = 0;
-          }
-
-          if(!token) {
             matriz[y][x][0] = 255;
             matriz[y][x][1] = 255;
             matriz[y][x][2] = 255;
           }
 
-          else {
+          else{
             matriz[y][x][0] = 0;
             matriz[y][x][1] = 0;
             matriz[y][x][2] = 0;
           }
+
+          //Escudo
+          /*if(h < 135 && h > 105 && s > 35){
+            by += y;
+            bx += x;
+            bn++;
+
+            matriz[y][x][0] = 255;
+            matriz[y][x][1] = 255;
+            matriz[y][x][2] = 255;
+          }*/
         }
       }
 
@@ -209,29 +226,13 @@ int main() {
             matriz[y][x][0] = 0;
             matriz[y][x][1] = 0;
             matriz[y][x][2] = 0;
-          }
-
-          float h, s, v;
-
-          rgbToHsv(r, g, b, &h, &s, &v);
-
-          if(h < 135 && h > 105){
-            if(s > 35){
-              by += y;
-              bx += x;
-              bn++;
-
-              matriz[y][x][0] = 255;
-              matriz[y][x][1] = 255;
-              matriz[y][x][2] = 255;
-            }
-          }
+          }x
         }*/
 
       cycle++;
       if(cycle > 50){
-        double value = (pow(hitx - (bx / 2 /bn), 2) + pow(hity - (by / 2 / bn), 2));
-        int dist = sqrt(value) - 7;
+        value = (pow(hitx - (bx / 2 /bn), 2) + pow(hity - (by / 2 / bn), 2));
+        dist = sqrt(value) - 7;
 
         if(dist < 100 && dist > -100 && bn > 0)
           printf("block!\n");
@@ -272,13 +273,19 @@ int main() {
       }
 
       if(cnr > 10){
-        al_draw_circle(cxr / cnr, cyr / cnr, 100, al_map_rgb(255, 0, 0), 1);
+        lastCx = cxr / cnr;
+        lastCy = cyr / cnr;
 
-        insere(f, cxr/cnr, cyr/cnr);
+        al_draw_circle(lastCx, lastCy, 100, al_map_rgb(255, 0, 0), 1);
 
-        if(f->count > 10)
-          retira(f);
+        insere(f, lastCx, lastCy);
       }
+
+      else
+        insere(f, lastCx, lastCy);
+
+      if(f->count > 10)
+          retira(f);
 
       drawAtk(f);
 
@@ -337,7 +344,7 @@ void drawAtk(fila *f){
   }
 }
 
-void rgbToHsv(int r, int g, int b, float *h, float *s, float *v){
+void rgbToHsv(int r, int g, int b, int *h, int *s, int *v){
   float tempR = (float)r/255;
   float tempG = (float)g/255;
   float tempB = (float)b/255;
@@ -375,22 +382,27 @@ void rgbToHsv(int r, int g, int b, float *h, float *s, float *v){
   }
   
   float delta = cMax - cMin;
-  
-  if(cMax == tempR){
-    if(tempG >= tempB)
-      *h = 60 * ((tempG - tempB) / delta);
-  
+
+  if(delta != 0){ 
+    if(cMax == tempR){
+      if(tempG >= tempB)
+        *h = 60 * ((tempG - tempB) / delta);
+    
+      else
+        *h = 60 * ((tempG - tempB) / delta) + 360;
+    }
+    
+    else if(cMax == tempG)
+      *h = 60 * ((tempB - tempR) / delta) + 120;
+    
     else
-      *h = 60 * ((tempG - tempB) / delta + 6);
+      *h = 60 * ((tempR - tempG) / delta) + 240;
   }
-  
-  else if(cMax == tempG)
-    *h = 60 * ((tempB - tempR) / delta + 2);
-  
+
   else
-    *h = 60 * ((tempR - tempG) / delta + 4);
+    *h = 0;
   
   *s = delta/cMax * 100;
   
-  *v = cMax *100;
+  *v = cMax * 100;
 }
