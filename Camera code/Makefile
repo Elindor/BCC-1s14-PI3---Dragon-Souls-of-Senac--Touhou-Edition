@@ -1,3 +1,4 @@
+
 TARGETS = teste
 
 CC = gcc
@@ -14,7 +15,10 @@ camera.o: camera.c camera.h
 fila.o: fila.c fila.h
 	$(CC) $(FLAGS) $< -c
 
-teste: hsvTrack.c camera.o fila.o
+hsvMatriz.o: hsvMatriz.c hsvMatriz.h
+	$(CC) $(FLAGS) $< -c
+
+teste: hsvTrack.c camera.o fila.o hsvMatriz.o
 	$(CC) $(FLAGS) $^ -o $@ $(LIBS)
 
 clean:

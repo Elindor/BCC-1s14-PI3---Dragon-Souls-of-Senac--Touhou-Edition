@@ -8,6 +8,7 @@
 #include "camera.h"
 
 #include "fila.h"
+#include "hsvMatriz.h"
 
 #define FPS 60
 
@@ -59,7 +60,7 @@ int main() {
   /**********/
 
   unsigned char ***matriz = camera_aloca_matriz(cam);
-  unsigned char ***matrizFiltro = camera_aloca_matriz(cam);
+  int ***matrizFiltro = alocaHsvMatriz(cam->largura, cam->altura);
 
   fila *f = aloca();
 
@@ -91,22 +92,50 @@ int main() {
   int r, g, b, r2, g2, b2;
 
   int h, s, v, h2, s2, v2;
+  int fh, fs, fv;
 
   int dh, ds, dv;
+  int tempH;
 
   int token;
 
   double value;
   int dist;
 
+  al_rest(1);
+
   for(y = 0; y < altura; y++)
     for(x = 0; x < largura; x++){
-      matrizFiltro[y][x][0] = cam->quadro[y][x][0];
-      matrizFiltro[y][x][1] = cam->quadro[y][x][1];
-      matrizFiltro[y][x][2] = cam->quadro[y][x][2];
+      rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], 
+        &matrizFiltro[y][x][0], &matrizFiltro[y][x][1], &matrizFiltro[y][x][2]);
 
-      rgbToHsv(matrizFiltro[y][x][0], matrizFiltro[y][x][1], matrizFiltro[y][x][2], 
-        (int *)&matrizFiltro[y][x][0], (int *)&matrizFiltro[y][x][1], (int *)&matrizFiltro[y][x][2]);
+      if(matrizFiltro[y][x][0] > 180){
+        matrizFiltro[y][x][0] -= 360;
+        matrizFiltro[y][x][0] = -matrizFiltro[y][x][0];
+      }
+        
+    }
+
+  al_rest(1);
+
+  for(y = 0; y < altura; y++)
+    for(x = 0; x < largura; x++){
+      rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], 
+        &fh, &fs, &fv);
+
+      if(fh > 180){
+        fh -= 360;
+        fh = -fh;
+      }
+
+      matrizFiltro[y][x][0] += fh;
+      matrizFiltro[y][x][0] /=2;
+
+      matrizFiltro[y][x][1] += fs;
+      matrizFiltro[y][x][1] /=2;
+      
+      matrizFiltro[y][x][2] += fv;
+      matrizFiltro[y][x][2] /=2;  
     }
 
   //gameloop
@@ -163,12 +192,12 @@ int main() {
 
           //Silhueta (REFINAR!!!)
           if(h > 180)
-            h -= 180;
+            tempH = -(h - 360);
 
-          if(matrizFiltro[y][x][0] > 180)
-            matrizFiltro[y][x][0] -= 180;
+          else
+            tempH = h;
 
-          dh = h - matrizFiltro[y][x][0];
+          dh = tempH - matrizFiltro[y][x][0];
           if(dh < 0)
             dh = -dh;
 
@@ -180,10 +209,13 @@ int main() {
           if(dv < 0)
             dv = -dv;
 
+          //dh > 15 && ds > 10 para tirar a interfencia de iluminacao, mas gera mtuiro ruido
+          //ds > 25 é o mais preciso, mas sofre de interferencia de iluminacao
           if(dv > 25){
-            matriz[y][x][0] = 255;
-            matriz[y][x][1] = 255;
-            matriz[y][x][2] = 255;
+            //valores para teste!
+            matriz[y][x][0] = 37;
+            matriz[y][x][1] = 50;
+            matriz[y][x][2] = 248;
           }
 
           else{
@@ -193,25 +225,21 @@ int main() {
           }
 
           //Escudo
-          /*if(h < 135 && h > 105 && s > 35){
+          if(h < 135 && h > 105 && s > 50 && v > 75){
             by += y;
             bx += x;
             bn++;
 
-            matriz[y][x][0] = 255;
+            matriz[y][x][0] = 0;
             matriz[y][x][1] = 255;
-            matriz[y][x][2] = 255;
-          }*/
+            matriz[y][x][2] = 0;
+          }
         }
       }
 
      /*for(y = 1; y < altura-1; y++)
         for(x = 1; x < largura-1; x++){
-          int r = cam->quadro[y][x][0];
-          int g = cam->quadro[y][x][1];
-          int b = cam->quadro[y][x][2];
-
-          int token = 4;
+          token = 4;
 
           if(255 != matriz[y+1][x][0])
             token--;
@@ -226,8 +254,7 @@ int main() {
             matriz[y][x][0] = 0;
             matriz[y][x][1] = 0;
             matriz[y][x][2] = 0;
-          }x
-        }*/
+          }*/
 
       cycle++;
       if(cycle > 50){
@@ -255,7 +282,8 @@ int main() {
 
       //Copia img editada na img direita
       camera_copia(cam, matriz, silhueta);
-      al_convert_mask_to_alpha(silhueta, al_map_rgb(0, 0, 0));
+      //cor para teste!
+      al_convert_mask_to_alpha(silhueta, al_map_rgb(37, 50, 248));
       al_draw_bitmap(silhueta, 0, 0, 0);
       /**********/
 
@@ -302,7 +330,7 @@ int main() {
   al_destroy_bitmap(esquerda);
 
   camera_libera_matriz(cam, matriz);
-  camera_libera_matriz(cam, matrizFiltro);
+  liberaHsvMatriz(matrizFiltro, cam->largura, cam->altura);
 
   /**********/
 
