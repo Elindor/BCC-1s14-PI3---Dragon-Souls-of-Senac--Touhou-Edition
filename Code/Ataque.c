@@ -1,13 +1,8 @@
-#include <opencv/highgui.h>
-#include "camera.h"
+#include "Ataque.h"
 
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_primitives.h>
-
-typedef enum strike{
+typedef enum _strike{
     Pincer = 1, Spit = 2, Needle = 3, Cut = 4, SpearThrow = 5, MagicMissiles = 6, Spores = 7, Needle2 = 8, Cut2 = 9, Omnicut = 10, Curse = 11, Web = 12, Fireball = 13
-};
+}strike;
 
 typedef struct _Ataque{
     float X0;
@@ -27,12 +22,12 @@ typedef struct _Ataque{
 }Ataque;
 
 typedef struct _noAtaque{
-    noAtaque* prox;
+    struct _noAtaque* prox;
     Ataque* attack;
 }noAtaque;
 
 
-*Ataque initWithAttackNumber(int attackId, int senderX, int senderY){
+Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     Ataque *ataque = malloc(sizeof(Ataque));
     
     ataque -> X0 = senderX;
@@ -104,7 +99,6 @@ bool checkAttack(Ataque *attack){
 
 
 void getImage(int number, ALLEGRO_BITMAP *image;){        // Isto procura a imagem de um ataque dado seu id.
-
     
     char nome[40], temp[20];
     int width, height;

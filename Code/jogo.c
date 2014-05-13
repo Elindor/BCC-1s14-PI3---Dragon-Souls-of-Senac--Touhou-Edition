@@ -6,6 +6,7 @@
 #include <allegro5/allegro_primitives.h>
 
 #include "camera.h"
+#include "gameCamera.h"
 
 
 
@@ -92,7 +93,7 @@ int game() {
     if(!timer)
         erro("erro na criacao do relogio\n");
 
-    ALLEGRO_DISPLAY *display = al_create_display(largura, altura/2);
+    ALLEGRO_DISPLAY *display = al_create_display(largura, altura);
     if(!display)
         erro("erro na criacao da janela\n");
 
@@ -112,6 +113,9 @@ int game() {
 
     // Matrizes-camera
     unsigned char ***matriz = camera_aloca_matriz(cam);
+
+    int ***background = alocaHsvMatriz(largura, altura);
+    getBackground(cam, background);
     
     /**********/
     
@@ -122,9 +126,7 @@ int game() {
 
     ALLEGRO_BITMAP *buffer = al_get_backbuffer(display);
 
-    ALLEGRO_BITMAP *esquerda = al_create_sub_bitmap(buffer, 0, 0, largura/2, altura/2);
-
-    ALLEGRO_BITMAP *direita = al_create_sub_bitmap(buffer, largura/2, 0, largura/2, altura/2);
+    ALLEGRO_BITMAP *gameScreen = al_create_sub_bitmap(buffer, 0, 0, largura, altura);
 
     /**********/
     
@@ -139,10 +141,11 @@ int game() {
     int hity = rand() % (altura/2);
     int currentStage;
 
+    fila *filaAtk = aloca();
+
     /***********************************************************************/
     //       Bob.3.0                  LOOPING                              //
     /***********************************************************************/
-
     
     while(1) {
         ALLEGRO_EVENT event;
@@ -163,10 +166,10 @@ int game() {
         if(terminar)
             break;
 
-        if(desenhar && al_is_event_queue_empty(queue)) { //Execução da fila:
+        if(desenhar && al_is_event_queue_empty(queue)){
+        //Processamento de câmera:
             desenhar = 0;
-            camera_atualiza(cam);
-
+            cameraLoop(matriz, cam, filaAtk, background, gameScreen);
             /**********/
 
         
@@ -185,11 +188,12 @@ int game() {
     //   Bob.8.0      LOOPING BREAK -- Starting shutdown                   //
     /***********************************************************************/
 
-    al_destroy_bitmap(direita);
+    al_destroy_bitmap(gameScreen);
 
-    al_destroy_bitmap(esquerda);
+    libera(filaAtk);
 
     camera_libera_matriz(cam, matriz);
+    liberaHsvMatriz(background, largura, altura);
 
     /**********/
 

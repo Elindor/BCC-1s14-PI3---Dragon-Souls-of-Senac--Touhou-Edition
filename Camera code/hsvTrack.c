@@ -60,7 +60,7 @@ int main() {
   /**********/
 
   unsigned char ***matriz = camera_aloca_matriz(cam);
-  int ***matrizFiltro = alocaHsvMatriz(cam->largura, cam->altura);
+  int ***background = alocaHsvMatriz(cam->largura, cam->altura);
 
   fila *f = aloca();
 
@@ -107,11 +107,11 @@ int main() {
   for(y = 0; y < altura; y++)
     for(x = 0; x < largura; x++){
       rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], 
-        &matrizFiltro[y][x][0], &matrizFiltro[y][x][1], &matrizFiltro[y][x][2]);
+        &background[y][x][0], &background[y][x][1], &background[y][x][2]);
 
-      if(matrizFiltro[y][x][0] > 180){
-        matrizFiltro[y][x][0] -= 360;
-        matrizFiltro[y][x][0] = -matrizFiltro[y][x][0];
+      if(background[y][x][0] > 180){
+        background[y][x][0] -= 360;
+        background[y][x][0] = -background[y][x][0];
       }
         
     }
@@ -128,14 +128,14 @@ int main() {
         fh = -fh;
       }
 
-      matrizFiltro[y][x][0] += fh;
-      matrizFiltro[y][x][0] /=2;
+      background[y][x][0] += fh;
+      background[y][x][0] /=2;
 
-      matrizFiltro[y][x][1] += fs;
-      matrizFiltro[y][x][1] /=2;
+      background[y][x][1] += fs;
+      background[y][x][1] /=2;
       
-      matrizFiltro[y][x][2] += fv;
-      matrizFiltro[y][x][2] /=2;  
+      background[y][x][2] += fv;
+      background[y][x][2] /=2;  
     }
 
   //gameloop
@@ -197,15 +197,15 @@ int main() {
           else
             tempH = h;
 
-          dh = tempH - matrizFiltro[y][x][0];
+          dh = tempH - background[y][x][0];
           if(dh < 0)
             dh = -dh;
 
-          ds = s - matrizFiltro[y][x][1];
+          ds = s - background[y][x][1];
           if(ds < 0)
             ds = -ds;
 
-          dv = v - matrizFiltro[y][x][2];
+          dv = v - background[y][x][2];
           if(dv < 0)
             dv = -dv;
 
@@ -257,7 +257,7 @@ int main() {
           }*/
 
       cycle++;
-      if(cycle > 50){
+      if(cycle > 50 && bn > 0){
         value = (pow(hitx - (bx / 2 /bn), 2) + pow(hity - (by / 2 / bn), 2));
         dist = sqrt(value) - 7;
 
@@ -330,7 +330,7 @@ int main() {
   al_destroy_bitmap(esquerda);
 
   camera_libera_matriz(cam, matriz);
-  liberaHsvMatriz(matrizFiltro, cam->largura, cam->altura);
+  liberaHsvMatriz(background, cam->largura, cam->altura);
 
   /**********/
 

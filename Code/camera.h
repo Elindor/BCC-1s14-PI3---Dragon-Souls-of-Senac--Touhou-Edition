@@ -5,9 +5,9 @@
 
 
 typedef struct {
-  unsigned char ***quadro;
-  int largura, altura;
-  CvCapture *capture;
+    unsigned char ***quadro;
+    int largura, altura;
+    CvCapture *capture;
 } camera;
 
 

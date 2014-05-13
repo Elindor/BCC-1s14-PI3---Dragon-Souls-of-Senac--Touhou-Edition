@@ -1,5 +1,5 @@
 #include <opencv/highgui.h>
-
+#include "camera.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
@@ -30,7 +30,7 @@ typedef struct _noAtaque{
 }noAtaque;
 
 
-*Ataque initWithAttackNumber(int attackId, int senderX, int senderY);
+Ataque *initWithAttackNumber(int attackId, int senderX, int senderY);
 bool checkAttack(Ataque *attack)
 ALLEGRO_BITMAP getImage(int number, X0, Y0, X, Y);
 int getDamage(int number);

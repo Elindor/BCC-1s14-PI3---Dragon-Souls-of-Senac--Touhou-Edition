@@ -1,7 +1,5 @@
 #include "camera.h"
 
-
-
 void camera_converte(camera *cam, IplImage *image) {
   char *row = image->imageData;
 
