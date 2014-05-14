@@ -1,31 +1,5 @@
 #include "Ataque.h"
 
-typedef enum _strike{
-    Pincer = 1, Spit = 2, Needle = 3, Cut = 4, SpearThrow = 5, MagicMissiles = 6, Spores = 7, Needle2 = 8, Cut2 = 9, Omnicut = 10, Curse = 11, Web = 12, Fireball = 13
-}strike;
-
-typedef struct _Ataque{
-    float X0;
-    float Y0;
-    float X;
-    float Y;
-    float targetX;
-    float targetY;
-    int damage;
-    int currentDuration;
-    float preAnimationTime;
-    float duration;
-    ALLEGRO_BITMAP *image;
-    float angle;
-    int id;
-
-}Ataque;
-
-typedef struct _noAtaque{
-    struct _noAtaque* prox;
-    Ataque* attack;
-}noAtaque;
-
 
 Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     Ataque *ataque = malloc(sizeof(Ataque));
@@ -59,11 +33,11 @@ Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     ataque -> damage = getDamage(attackId);
     
     // Realiza a inclinação
-    float tempAngle = atan2( (attack->targetY - attack->Y0), (attack->targetX - attack->X0) );
+    float tempAngle = atan2( (ataque->targetY - ataque->Y0), (ataque->targetX - ataque->X0) );
     ataque -> angle = tempAngle * 3.14 / 180.0;
     
     // Desenha no primeiro frame
-    al_draw_rotated_bitmap(attack -> image, attack -> X, attack -> Y, attack -> X, attack -> Y, attack ->angle, 0);
+    al_draw_rotated_bitmap(ataque->image, ataque -> X, ataque -> Y, ataque -> X, ataque -> Y, ataque ->angle, 0);
     
     return ataque;
 }
@@ -91,20 +65,20 @@ bool checkAttack(Ataque *attack){
                 
             
             free(attack);
-            return TRUE;
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
 
 
-void getImage(int number, ALLEGRO_BITMAP *image;){        // Isto procura a imagem de um ataque dado seu id.
+void getImage(int number, ALLEGRO_BITMAP *image){        // Isto procura a imagem de um ataque dado seu id.
     
     char nome[40], temp[20];
     int width, height;
     
     //Switch case for images
-    Switch(number){
+    switch(number){
     case Pincer:
         sprintf (temp, "Pincer");
         width = height = 75;
@@ -135,12 +109,12 @@ void getImage(int number, ALLEGRO_BITMAP *image;){        // Isto procura a imag
         sprintf (temp, "Spores");
         width = height = 50;
         break;
-    case Needle2:
+    case NeedleB:
         sprintf (temp, "Needle");
         width = 60;
         height = 35;
         break;
-    case Cut2:
+    case CutB:
         sprintf (temp, "Cut2");
         width = height = 75;
         break;
@@ -168,7 +142,7 @@ void getImage(int number, ALLEGRO_BITMAP *image;){        // Isto procura a imag
 
 int getDamage(int number){        //Este método devolve o dano de um ataque, dado seu id.
     
-    Switch(number){
+    switch(number){
     case Pincer:
         return 4;
     case Spit:
@@ -183,9 +157,9 @@ int getDamage(int number){        //Este método devolve o dano de um ataque, da
         return 3;
     case Spores:
         return 2;
-    case Needle2:
+    case NeedleB:
         return 15;
-    case Cut2:
+    case CutB:
         return 11;
     case Omnicut:
         return 8;
@@ -200,7 +174,7 @@ int getDamage(int number){        //Este método devolve o dano de um ataque, da
 
 float getDuration(int num){      //Este metodo devolve qual o tempo de animação do ataque.
 
-    Switch(number){
+    switch(num){
     case Pincer:
         return 2;
     case Spit:
@@ -215,9 +189,9 @@ float getDuration(int num){      //Este metodo devolve qual o tempo de animaçã
         return 1;
     case Spores:
         return 2;
-    case Needle2:
+    case NeedleB:
         return 0.3;
-    case Cut2:
+    case CutB:
         return 2;
     case Omnicut:
         return 3;

@@ -6,29 +6,30 @@
 #include <allegro5/allegro_primitives.h>
 
 
+
 typedef enum monstro{
     Crab = 0, Fly = 1, Bug = 2, Fat = 3, Kobold = 4, Worm = 5, Leech = 6, Hornet = 7, UndeadFat = 8, Knight = 9, Shadow = 10, Spider = 11, Sentry = 12
-};
+}monstro;
 
 typedef struct _Monster{
     int HP;
     int ataque[2];
-    float cooldown;
+    float cooldown;         // Somar o periodo dos ataques no uso, lembrar de deletar comentário
     ALLEGRO_BITMAP *image;
     float X;
     float Y;
+    bool fromLeft;
 }Monster;
 
 typedef struct _noMonster{
     noMonster* prox;
-    Monster* attack;
+    Monster* monster;
 }noMonster;
 
-
-Monster initWithMonsterNumber(int fase);
+Monster* initWithMonsterNumber(int fase, float altura);
 
 int getId(int fase);
-ALLEGRO_BITMAP getImage(int number, ALLEGRO_BITMAP image);
+void getImage(int number, ALLEGRO_BITMAP image);
 int getLife(int number);
 void getAttack(int fase, int *num);
-int getCooldown(int num);
+float getCooldown(int num);

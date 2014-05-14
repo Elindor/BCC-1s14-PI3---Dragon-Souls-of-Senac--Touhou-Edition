@@ -5,25 +5,7 @@
 #include <allegro5/allegro_primitives.h>
 
 #include <time.h>
-
-
-typedef enum monstro{
-    Crab = 0, Fly = 1, Bug = 2, Fat = 3, Kobold = 4, Worm = 5, Leech = 6, Hornet = 7, UndeadFat = 8, Knight = 9, Shadow = 10, Spider = 11, Sentry = 12
-};
-
-typedef struct _Monster{
-    int HP;
-    int ataque[2];
-    float cooldown;         // Somar o periodo dos ataques no uso, lembrar de deletar comentário
-    ALLEGRO_BITMAP *image;
-    float X;
-    float Y;
-}Monster;
-
-typedef struct _noMonster{
-    noMonster* prox;
-    Monster* monster;
-}oMonster;
+#include "Monster.h"
 
 
 
@@ -35,17 +17,21 @@ Monster* initWithMonsterNumber(int fase, float altura){
     
     int random = rand()%180;    // X é definido aleatóriamente (lado ou não lado?)
     random = random % 2;
-    if(random = 1)
+    if(random == 1){
         monstro -> X = -200;
-    else
+        monstro -> fromLeft = true;
+    }
+    else{
         monstro -> X = +200;
+        monstro -> fromLeft = false;
+    }
     
     
     if(monsterId == 1 || monsterId == 4 || monsterId == 5 || monsterId == 9 || monsterId == 10){ // Meele Monster
-        monstro -> y =
+        //monstro -> Y =
     }
     else{
-        monstro -> y =
+        //monstro -> Y =
     }
     
     
@@ -117,13 +103,13 @@ int getId(int fase){       //Recebido uma fase, este método realiza o sorteio a
     }
 }
 
-ALLEGRO_BITMAP getImage(int number, ALLEGRO_BITMAP image){        // Isto procura a imagem de um monstro dado seu id
+void getImage(int number, ALLEGRO_BITMAP image){        // Isto procura a imagem de um monstro dado seu id
     
     char nome[40], temp[20];
     int width, height;
     
     
-    Switch(number){
+    switch(number){
     case Crab:
         sprintf (temp, "Crab");
         width = 179;
@@ -198,7 +184,7 @@ ALLEGRO_BITMAP getImage(int number, ALLEGRO_BITMAP image){        // Isto procur
 
 int getLife(int number){        //Este método devolve a vida de um monstro, dado seu id
     
-    Switch(number){
+    switch(number){
     case Crab:
         return 9;
     case Fly:
@@ -230,7 +216,7 @@ int getLife(int number){        //Este método devolve a vida de um monstro, dad
 
 void getAttack(int fase, int *num){      //Este metodo devolve quais ataques o monstro realiza, dado seu id
     
-    Switch(fase){
+    switch(fase){
     case Crab:
         num[0] = 1;
         num[1] = 1;
@@ -286,8 +272,8 @@ void getAttack(int fase, int *num){      //Este metodo devolve quais ataques o m
     }
 }
 
-int getCooldown(int num){
-    Switch(num){
+float getCooldown(int num){
+    switch(num){
     case Crab:
         return 8;
     case Fly:
