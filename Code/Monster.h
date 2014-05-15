@@ -22,14 +22,14 @@ typedef struct _Monster{
 }Monster;
 
 typedef struct _noMonster{
-    noMonster* prox;
+    struct noMonster* prox;
     Monster* monster;
 }noMonster;
 
 Monster* initWithMonsterNumber(int fase, float altura);
 
 int getId(int fase);
-void getImage(int number, ALLEGRO_BITMAP image);
+void getImage(int number, ALLEGRO_BITMAP* image);
 int getLife(int number);
 void getAttack(int fase, int *num);
 float getCooldown(int num);
