@@ -1,47 +1,47 @@
 #import "gameCamera.h"
 
-void getBackground(camera cam, int ***background){
+void getBackground(camera *cam, int ***background){
 	int x, y;
 
 	int tempH, tempS, tempV;
 
 	al_rest(1);
 
-	for(y = 0; y < altura; y++)
-    	for(x = 0; x < largura; x++){
+	for(y = 0; y < cam->altura; y++)
+    	for(x = 0; x < cam->largura; x++){
       		rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], 
-        	&matrizFiltro[y][x][0], &matrizFiltro[y][x][1], &matrizFiltro[y][x][2]);
+        	&background[y][x][0], &background[y][x][1], &background[y][x][2]);
 
-    		if(matrizFiltro[y][x][0] > 180){
-        		matrizFiltro[y][x][0] -= 360;
-        		matrizFiltro[y][x][0] = -matrizFiltro[y][x][0];
+    		if(background[y][x][0] > 180){
+        		background[y][x][0] -= 360;
+        		background[y][x][0] = -background[y][x][0];
     		}
     	}
 
     al_rest(1);
 
-    for(y = 0; y < altura; y++)
-    	for(x = 0; x < largura; x++){
+    for(y = 0; y < cam->altura; y++)
+    	for(x = 0; x < cam->largura; x++){
       		rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], 
         	&tempH, &tempS, &tempV);
 
-    		if(fh > 180){
-        		fh -= 360;
-        		fh = -fh;
+    		if(tempH > 180){
+        		tempH -= 360;
+        		tempH = -tempH;
     		}
 
-    		matrizFiltro[y][x][0] += fh;
-    		matrizFiltro[y][x][0] /=2;
+    		background[y][x][0] += tempH;
+    		background[y][x][0] /=2;
 
-    		matrizFiltro[y][x][1] += fs;
-    		matrizFiltro[y][x][1] /=2;
+    		background[y][x][1] += tempS;
+    		background[y][x][1] /=2;
       
-    		matrizFiltro[y][x][2] += fv;
-    		matrizFiltro[y][x][2] /=2;
+    		background[y][x][2] += tempV;
+    		background[y][x][2] /=2;
     	}
 }
 
-void cameraLoop(unsigned char ***matriz, camera cam, fila *f, int ***backgroundALLEGRO_BITMAP *gameScreen){
+void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background, ALLEGRO_BITMAP *gameScreen){
 	camera_atualiza(cam);
 
 	int x, y;
@@ -58,10 +58,10 @@ void cameraLoop(unsigned char ***matriz, camera cam, fila *f, int ***backgroundA
     int dh, ds, dv;
     int tempH;
 
-    ALLEGRO_BITMAP *silhueta = al_create_bitmap(largura, altura);
+    ALLEGRO_BITMAP *silhueta = al_create_bitmap(cam->largura, cam->altura);
 
-    for(y = 0; y < altura; y++){
-        for(x = 0; x < largura; x++){
+    for(y = 0; y < cam->altura; y++){
+        for(x = 0; x < cam->largura; x++){
           	//Espada
           	rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], &h, &s, &v);
 

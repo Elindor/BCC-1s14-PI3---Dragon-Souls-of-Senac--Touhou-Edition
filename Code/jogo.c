@@ -8,7 +8,8 @@
 #include "camera.h"
 #include "gameCamera.h"
 
-
+#import "Ataque.h"
+#import "Monster.h"
 
 #define FPS 60
 

@@ -1,5 +1,5 @@
-#include <opencv/highgui.h>
-
+#ifndef MONSTER
+#define MONSTER
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
@@ -22,14 +22,16 @@ typedef struct _Monster{
 }Monster;
 
 typedef struct _noMonster{
-    struct noMonster* prox;
-    Monster* monster;
+    struct _noMonster *prox;
+    Monster *monster;
 }noMonster;
 
-Monster* initWithMonsterNumber(int fase, float altura);
+Monster* initWithMonsterNumber(int fase);
 
 int getId(int fase);
 void getImage(int number, ALLEGRO_BITMAP* image);
 int getLife(int number);
 void getAttack(int fase, int *num);
 float getCooldown(int num);
+
+#endif

@@ -15,5 +15,7 @@
 
 void drawAtk(fila *f);
 void rgbToHsv(int r, int g, int b, int *h, int *s, int *v);
-void cameraLoop(unsigned char ***matriz, camera cam, fila *f, int ***background, ALLEGRO_BITMAP *gameScreen);
-void getBackground(camera cam, int ***background);
+void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background, ALLEGRO_BITMAP *gameScreen);
+void getBackground(camera *cam, int ***background);
+
+#endif

@@ -1,6 +1,5 @@
 #include "Ataque.h"
 
-
 Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     Ataque *ataque = malloc(sizeof(Ataque));
     
@@ -143,63 +142,91 @@ void getImage(int number, ALLEGRO_BITMAP *image){        // Isto procura a image
 int getDamage(int number){        //Este método devolve o dano de um ataque, dado seu id.
     
     switch(number){
-    case Pincer:
-        return 4;
-    case Spit:
-        return 7;
-    case Needle:
-        return 15;
-    case Cut:
-        return 6;
-    case SpearThrow:
-        return 8;
-    case MagicMissiles:
-        return 3;
-    case Spores:
-        return 2;
-    case NeedleB:
-        return 15;
-    case CutB:
-        return 11;
-    case Omnicut:
-        return 8;
-    case Curse:
-        return 5;
-    case Web:
-        return 0;
-    case Fireball:
-        return 10;
+        case Pincer:
+            return 4;
+
+        case Spit:
+            return 7;
+
+        case Needle:
+            return 15;
+
+        case Cut:
+            return 6;
+
+        case SpearThrow:
+            return 8;
+
+        case MagicMissiles:
+            return 3;
+
+        case Spores:
+            return 2;
+
+        case NeedleB:
+            return 15;
+
+        case CutB:
+            return 11;
+
+        case Omnicut:
+            return 8;
+
+        case Curse:
+            return 5;
+
+        case Web:
+            return 0;
+
+        case Fireball:
+            return 10;
     }
+
+    return 0;
 }
 
 float getDuration(int num){      //Este metodo devolve qual o tempo de animação do ataque.
 
     switch(num){
-    case Pincer:
-        return 2;
-    case Spit:
-        return 4;
-    case Needle:
-        return 2;
-    case Cut:
-        return 2;
-    case SpearThrow:
-        return 1;
-    case MagicMissiles:
-        return 1;
-    case Spores:
-        return 2;
-    case NeedleB:
-        return 0.3;
-    case CutB:
-        return 2;
-    case Omnicut:
-        return 3;
-    case Curse:
-        return 2;
-    case Web:
-        return 1.5;
-    case Fireball:
-        return 2;
+        case Pincer:
+            return 2;
+
+        case Spit:
+            return 4;
+
+        case Needle:
+            return 2;
+
+        case Cut:
+            return 2;
+
+        case SpearThrow:
+            return 1;
+
+        case MagicMissiles:
+            return 1;
+
+        case Spores:
+            return 2;
+
+        case NeedleB:
+            return 0.3;
+
+        case CutB:
+            return 2;
+
+        case Omnicut:
+            return 3;
+
+        case Curse:
+            return 2;
+
+        case Web:
+            return 1.5;
+
+        case Fireball:
+            return 2;
     }
+
+    return 0;
 }

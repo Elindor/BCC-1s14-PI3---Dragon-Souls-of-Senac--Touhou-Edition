@@ -1,9 +1,11 @@
-#include <opencv/highgui.h>
-#include "camera.h"
+#ifndef ATAQUE
+#define ATAQUE
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
+
+#include <math.h>
 
 
 typedef enum _strike{
@@ -28,9 +30,9 @@ typedef struct _Ataque{
 }Ataque;
 
 typedef struct _noAtaque{
-    struct noAtaque* prox;
-    Ataque* attack;
-};
+    struct _noAtaque *prox;
+    Ataque *attack;
+}noAtaque;
 
 
 Ataque *initWithAttackNumber(int attackId, int senderX, int senderY);
@@ -39,3 +41,4 @@ void getImage(int number, ALLEGRO_BITMAP *image);
 int getDamage(int number);
 float getDuration(int num);
 
+#endif
