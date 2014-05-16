@@ -26,7 +26,7 @@ Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
 
     ataque -> currentDuration = 0;
 
-    getImage(attackId, ataque -> image);
+    getImageAttack(attackId, ataque -> image);
     
     ataque -> duration = getDuration(attackId);
     ataque -> damage = getDamage(attackId);
@@ -71,7 +71,7 @@ bool checkAttack(Ataque *attack){
 }
 
 
-void getImage(int number, ALLEGRO_BITMAP *image){        // Isto procura a imagem de um ataque dado seu id.
+void getImageAttack(int number, ALLEGRO_BITMAP *image){        // Isto procura a imagem de um ataque dado seu id.
     
     char nome[40], temp[20];
     int width, height;

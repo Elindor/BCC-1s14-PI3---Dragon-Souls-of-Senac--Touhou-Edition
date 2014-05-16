@@ -29,7 +29,7 @@ typedef struct _noMonster{
 Monster* initWithMonsterNumber(int fase);
 
 int getId(int fase);
-void getImage(int number, ALLEGRO_BITMAP* image);
+void getImageMonster(int number, ALLEGRO_BITMAP* image);
 int getLife(int number);
 void getAttack(int fase, int *num);
 float getCooldown(int num);

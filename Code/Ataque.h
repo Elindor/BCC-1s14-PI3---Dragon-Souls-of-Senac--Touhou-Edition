@@ -37,7 +37,7 @@ typedef struct _noAtaque{
 
 Ataque *initWithAttackNumber(int attackId, int senderX, int senderY);
 bool checkAttack(Ataque *attack);
-void getImage(int number, ALLEGRO_BITMAP *image);
+void getImageAttack(int number, ALLEGRO_BITMAP *image);
 int getDamage(int number);
 float getDuration(int num);
 

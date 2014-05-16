@@ -36,7 +36,7 @@ Monster* initWithMonsterNumber(int fase){
     
     
     
-    getImage(monsterId, monstro -> image);      // Aloca internamente a imagem do monstro.
+    getImageMonster(monsterId, monstro -> image);      // Aloca internamente a imagem do monstro.
     
     
     monstro -> HP = getLife(monsterId);             //Devolve a vida do monstro
@@ -104,7 +104,7 @@ int getId(int fase){       //Recebido uma fase, este método realiza o sorteio a
     return 0;
 }
 
-void getImage(int number, ALLEGRO_BITMAP* image){        // Isto procura a imagem de um monstro dado seu id
+void getImageMonster(int number, ALLEGRO_BITMAP* image){        // Isto procura a imagem de um monstro dado seu id
     
     char nome[40], temp[20];
     int width, height;

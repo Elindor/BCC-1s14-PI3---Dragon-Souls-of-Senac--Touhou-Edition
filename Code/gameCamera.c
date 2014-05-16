@@ -58,6 +58,14 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
     int dh, ds, dv;
     int tempH;
 
+    int lastX = 0;
+    int lastY = 0;
+
+    if(f->fim != NULL){
+      lastX = f->fim->x;
+      lastY = f->fim->y;
+    }
+
     ALLEGRO_BITMAP *silhueta = al_create_bitmap(cam->largura, cam->altura);
 
     for(y = 0; y < cam->altura; y++){
@@ -139,7 +147,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
     }
 
     else
-        insere(f, f->fim->x, f->fim->y);
+        insere(f, lastX, lastY);
 
     if(f->count > 10)
         retira(f);

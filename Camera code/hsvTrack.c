@@ -162,6 +162,7 @@ int main() {
       break;
 
     //interpretar img e realizar transformações
+    printf("%d\n", al_is_event_queue_empty(queue));
     if(desenhar && al_is_event_queue_empty(queue)) {
       desenhar = 0;
       camera_atualiza(cam);

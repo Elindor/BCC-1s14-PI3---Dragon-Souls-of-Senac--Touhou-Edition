@@ -22,7 +22,7 @@ typedef struct _multiList{
 
 /*///////////////////////////////////////////////////////////////////////////
 //                Bob.0.0      Glossário - Atalhos
-//************************************************************************//*
+**************************************************************************
 //
 //      Após lidarmos com códigos desagradevelmente longos no ultimo PI,
 //  estipula-se aqui um protocolo de procura com ctrl + f (Ou command + f)
@@ -68,7 +68,7 @@ void erro(char *mensagem) {
 }
 
 
-int game() {
+int main() {
     
     /***********************************************************************/
     //       Bob.1.0   Inicialização da camera e allegro                   //
@@ -138,8 +138,8 @@ int game() {
     int makeOnce = 1;
     int makeOnce2 = 1;
     int cycle = 0;
-    int hitx = rand() % (largura/2);
-    int hity = rand() % (altura/2);
+    int hitx = rand() % (largura);
+    int hity = rand() % (altura);
     int currentStage;
 
     fila *filaAtk = aloca();
@@ -175,7 +175,6 @@ int game() {
 
         
 
-    
         
 
             /**********/
