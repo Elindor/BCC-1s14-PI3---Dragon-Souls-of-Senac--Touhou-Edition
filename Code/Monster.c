@@ -5,6 +5,7 @@
 #include <allegro5/allegro_primitives.h>
 
 #include <time.h>
+#include "globals.h"
 #include "Monster.h"
 
 
@@ -28,10 +29,10 @@ Monster* initWithMonsterNumber(int fase){
     
     
     if(monsterId == 1 || monsterId == 4 || monsterId == 5 || monsterId == 9 || monsterId == 10){ // Meele Monster
-        //monstro -> Y =
+        monstro -> Y = globalAltura/4;
     }
     else{
-        //monstro -> Y =
+        monstro -> Y = rand()%globalAltura;
     }
     
     
@@ -42,10 +43,24 @@ Monster* initWithMonsterNumber(int fase){
     monstro -> HP = getLife(monsterId);             //Devolve a vida do monstro
     monstro -> cooldown = getCooldown(monsterId);   //Devolve o Cooldown do monstro
     getAttack(monsterId, monstro -> ataque); // Manda pada o Void o ataque e função preenche vetor.
-    
+    monstro -> ready = false;
     
     return monstro;
 }
+
+
+void startMove(Monster* monstro){
+    
+    if (monstro -> fromLeft == true)
+        monstro -> X++;
+    else
+        monstro -> X--;
+        
+    if(monstro -> X == 200 || monstro -> X == globalLargura - 200)
+        monstro -> ready = true;
+    
+}
+
 
 int getId(int fase){       //Recebido uma fase, este método realiza o sorteio aleatório de monstros possiveis para spawn.
     srand( (unsigned) time (NULL) ) ;

@@ -18,7 +18,7 @@ typedef struct _multiList{
     noMonster* primeiroMonstro;
 }multiList;
 
-
+void spawnMonster(int currentStage, multiList* lista);
 
 /*///////////////////////////////////////////////////////////////////////////
 //                Bob.0.0      Glossário - Atalhos
@@ -41,7 +41,7 @@ typedef struct _multiList{
 //
 //      Looping / gameflow basics . . . . . . . . . . . . . . . . . 3.0
 //
-//
+//      Monster Cycles  . . . . . . . . . . . . . . . . . . . . . . 4.0
 //
 //
 //
@@ -140,8 +140,13 @@ int main() {
     int cycle = 0;
     int hitx = rand() % (largura);
     int hity = rand() % (altura);
-    int currentStage;
+    int currentStage = 1;
+    int respawnTime = 0;
 
+    multiList *omniList = malloc(sizeof(multiList));
+    omniList -> primeiroMonstro = NULL;
+    
+     // Importancia disso!?
     fila *filaAtk = aloca();
 
     /***********************************************************************/
@@ -166,6 +171,45 @@ int main() {
 
         if(terminar)
             break;
+        
+        /***********************************************************************/
+        //       Bob.4.0            Monster Cycles                             //
+        /***********************************************************************/
+        
+        respawnTime++;
+        if(respawnTime >= 200 - (currentStage * 15)){
+            spawnMonster(currentStage, omniList);
+            respawnTime = -9999;
+        }
+        
+        if(omniList -> primeiroMonstro != NULL){
+            noMonster *temp = malloc(sizeof(noMonster));
+            temp = omniList -> primeiroMonstro;
+            printf("Started monster move sequence\n");
+            do{
+                if(temp -> monster -> ready == false)
+
+                    startMove(omniList -> primeiroMonstro -> monster);
+                //else if(temp -> monster -> cooldown > temp -> monster -> currentCooldown)
+                //attack sequence
+                printf("Bla\n");
+
+                al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
+                printf("Bla\n");
+
+                if(temp -> prox != NULL);
+                    temp = temp -> prox;
+                
+            }while(temp -> prox != NULL);
+            
+            
+        }
+        
+        
+        
+        
+        
+        
 
         if(desenhar && al_is_event_queue_empty(queue)){
         //Processamento de câmera:
@@ -224,23 +268,31 @@ int main() {
 void spawnMonster(int currentStage, multiList* lista){
     Monster* minion = initWithMonsterNumber(currentStage);
     
+    printf("A monster has spawned!\n");
     noMonster* m = malloc(sizeof(noMonster));
     m -> monster = minion;
     m -> prox = NULL;
 
     //Procura lugar na lista
     if(lista -> primeiroMonstro == NULL){
+        printf("Should be here!\n");
+
         lista -> primeiroMonstro = m;
         return;
     }
+
     noMonster* temp;
     temp = lista -> primeiroMonstro;
-    
-    while (temp -> prox != NULL) {
+    printf("HU3!\n");
+
+    while(temp -> prox != NULL) {
+        printf("lolz!\n");
         temp = temp -> prox;
     }
-    
+    printf("HU3!\n");
+
     temp -> prox = m;
+    printf("With no bugs at all on the way\n");
 }
 
 void beginAttack(int *attackNumber, int X0, int Y0, multiList* lista){

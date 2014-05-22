@@ -1,4 +1,5 @@
 #include "camera.h"
+#include "globals.h"
 
 void camera_converte(camera *cam, IplImage *image) {
     char *row = image->imageData;
@@ -91,6 +92,10 @@ void camera_copia(camera *cam, unsigned char ***matriz, ALLEGRO_BITMAP *bitmap) 
 
 unsigned char ***camera_aloca_matriz(camera *cam) {
     unsigned char ***matriz = malloc(cam->altura * sizeof(unsigned char **));
+    
+    globalAltura = cam->altura;
+    globalLargura = cam->largura;
+    printf("Altura: %d\n Largura: %d\n", globalAltura, globalLargura);
     
     for(int y = 0; y < cam->altura; y++) {
         matriz[y] = malloc(cam->largura * sizeof(unsigned char *));
