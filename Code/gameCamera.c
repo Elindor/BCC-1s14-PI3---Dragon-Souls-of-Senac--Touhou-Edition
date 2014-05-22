@@ -2,6 +2,7 @@
 
 void getBackground(camera *cam, int ***background){
 	int x, y;
+  int i = 0;
 
 	int tempH, tempS, tempV;
 
@@ -18,27 +19,29 @@ void getBackground(camera *cam, int ***background){
     		}
     	}
 
-    al_rest(1);
+    for(;i < 10; i++){
+      al_rest(0.5);
 
-    for(y = 0; y < cam->altura; y++)
-    	for(x = 0; x < cam->largura; x++){
-      		rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], 
-        	&tempH, &tempS, &tempV);
-
-    		if(tempH > 180){
-        		tempH -= 360;
-        		tempH = -tempH;
-    		}
-
-    		background[y][x][0] += tempH;
-    		background[y][x][0] /=2;
-
-    		background[y][x][1] += tempS;
-    		background[y][x][1] /=2;
-      
-    		background[y][x][2] += tempV;
-    		background[y][x][2] /=2;
-    	}
+      for(y = 0; y < cam->altura; y++)
+        for(x = 0; x < cam->largura; x++){
+            rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], 
+            &tempH, &tempS, &tempV);
+  
+            if(tempH > 180){
+                tempH -= 360;
+                tempH = -tempH;
+            }
+  
+            background[y][x][0] += tempH;
+            background[y][x][0] /=2;
+  
+            background[y][x][1] += tempS;
+            background[y][x][1] /=2;
+          
+            background[y][x][2] += tempV;
+            background[y][x][2] /=2;
+          }
+      }
 }
 
 void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background, ALLEGRO_BITMAP *gameScreen){
