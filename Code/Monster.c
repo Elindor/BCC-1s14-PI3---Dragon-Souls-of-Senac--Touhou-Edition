@@ -208,6 +208,18 @@ void getImageMonster(int number, ALLEGRO_BITMAP* image){        // Isto procura 
     image = al_create_bitmap(width, height);
     sprintf (nome, "Graphics/%s.png", temp);
     image = al_load_bitmap(nome);
+
+    /*ALLEGRO_DISPLAY *display = al_create_display(width, height);
+    if(!display)
+        printf("Erro!\n");
+
+    al_draw_bitmap(image, 0, 0, 0);
+
+    printf("DrawImage\n");
+
+    al_rest(5);
+
+    al_destroy_display(display);*/
 }
 
 int getLife(int number){        //Este método devolve a vida de um monstro, dado seu id

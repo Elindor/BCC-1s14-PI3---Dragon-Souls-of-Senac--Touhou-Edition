@@ -146,8 +146,8 @@ int main() {
     multiList *omniList = malloc(sizeof(multiList));
     omniList -> primeiroMonstro = NULL;
     
-     // Importancia disso!?
-    fila *filaAtk = aloca();
+
+    fila *filaPlayerAtk = aloca();
 
     /***********************************************************************/
     //       Bob.3.0                  LOOPING                              //
@@ -182,7 +182,7 @@ int main() {
             respawnTime = -9999;
         }
         
-        if(omniList -> primeiroMonstro != NULL){
+        /*if(omniList -> primeiroMonstro != NULL){
             noMonster *temp = malloc(sizeof(noMonster));
             temp = omniList -> primeiroMonstro;
             printf("Started monster move sequence\n");
@@ -203,7 +203,7 @@ int main() {
             }while(temp -> prox != NULL);
             
             
-        }
+        }*/
         
         
         
@@ -214,7 +214,7 @@ int main() {
         if(desenhar && al_is_event_queue_empty(queue)){
         //Processamento de câmera:
             desenhar = 0;
-            cameraLoop(matriz, cam, filaAtk, background, gameScreen);
+            cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen);
             /**********/
 
         
@@ -234,7 +234,7 @@ int main() {
 
     al_destroy_bitmap(gameScreen);
 
-    libera(filaAtk);
+    libera(filaPlayerAtk);
 
     camera_libera_matriz(cam, matriz);
     liberaHsvMatriz(background, largura, altura);
