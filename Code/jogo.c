@@ -127,6 +127,9 @@ int main() {
 
     ALLEGRO_BITMAP *buffer = al_get_backbuffer(display);
 
+    ALLEGRO_BITMAP *HPBarBox = NULL;
+    HPBarBox = al_load_bitmap("Graphics/hpBar.png");
+
     ALLEGRO_BITMAP *gameScreen = al_create_sub_bitmap(buffer, 0, 0, largura, altura);
 
     /**********/
@@ -142,6 +145,7 @@ int main() {
     int hity = rand() % (altura);
     int currentStage = 1;
     int respawnTime = 0;
+    int playerHP = 100;
 
     multiList *omniList = malloc(sizeof(multiList));
     omniList -> primeiroMonstro = NULL;
@@ -171,60 +175,64 @@ int main() {
 
         if(terminar)
             break;
-        
-        /***********************************************************************/
-        //       Bob.4.0            Monster Cycles                             //
-        /***********************************************************************/
-        
-        respawnTime++;
-        if(respawnTime >= 200 - (currentStage * 15)){
-            spawnMonster(currentStage, omniList);
-            respawnTime = -9999;
-        }
-        
-        /*if(omniList -> primeiroMonstro != NULL){
-            noMonster *temp = malloc(sizeof(noMonster));
-            temp = omniList -> primeiroMonstro;
-            printf("Started monster move sequence\n");
-            do{
-                if(temp -> monster -> ready == false)
-
-                    startMove(omniList -> primeiroMonstro -> monster);
-                //else if(temp -> monster -> cooldown > temp -> monster -> currentCooldown)
-                //attack sequence
-                printf("Bla\n");
-
-                al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
-                printf("Bla\n");
-
-                if(temp -> prox != NULL);
-                    temp = temp -> prox;
-                
-            }while(temp -> prox != NULL);
-            
-            
-        }*/
-        
-        
-        
-        
-        
-        
 
         if(desenhar && al_is_event_queue_empty(queue)){
         //Processamento de câmera:
             desenhar = 0;
             cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen);
-            /**********/
 
-        
+            /***********************************************************************/
+            //       Bob.4.0            Monster Cycles                             //
+            /***********************************************************************/
 
-        
+            if(respawnTime >= 200 - (currentStage * 15)){
+                spawnMonster(currentStage, omniList);
+                respawnTime = 0;
+                playerHP--;
+            }
+            
+            if(omniList -> primeiroMonstro != NULL){
+                noMonster *temp = malloc(sizeof(noMonster));
+                temp = omniList -> primeiroMonstro;
+                printf("Started monster move sequence\n");
+                al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
+                
+                //Ver aqui
+                /*do{
+                    if(temp -> monster -> ready == false)
+    
+                            //startMove(omniList -> primeiroMonstro -> monster);
+                        //else if(temp -> monster -> cooldown > temp -> monster -> currentCooldown)
+                        //attack sequence
+    
+                        al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
+    
+                        if(temp -> prox != NULL);
+                            temp = temp -> prox;
+                        
+                    }while(temp -> prox != NULL);*/
+                
+            }
 
-            /**********/
+            if(!HPBarBox)
+                printf("DAMN\n");
+            
+            float tempHP = (float) playerHP / 100;
+            al_draw_filled_rectangle(41, altura - 79, (tempHP * (largura - 41)), altura - 51, cor);
+            
+            al_draw_scaled_bitmap(HPBarBox,
+                                  0, 0,
+                                  al_get_bitmap_width(HPBarBox),
+                                  al_get_bitmap_height(HPBarBox),
+                                  40, altura - 80,
+                                  largura - 80, 30,
+                                  0);
 
             al_flip_display();
         }
+        
+        respawnTime++;
+        
     }
     
     
@@ -233,6 +241,7 @@ int main() {
     /***********************************************************************/
 
     al_destroy_bitmap(gameScreen);
+    al_destroy_bitmap(HPBarBox);
 
     libera(filaPlayerAtk);
 

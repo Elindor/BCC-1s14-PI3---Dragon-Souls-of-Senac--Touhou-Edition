@@ -36,9 +36,11 @@ Monster* initWithMonsterNumber(int fase){
     }
     
     
-    
-    getImageMonster(monsterId, monstro -> image);      // Aloca internamente a imagem do monstro.
-    
+    monstro -> image = NULL;
+    getImageMonster(monsterId, &monstro -> image);      // Aloca internamente a imagem do monstro.
+
+    if(!monstro -> image)
+        printf("NOPE!\n");
     
     monstro -> HP = getLife(monsterId);             //Devolve a vida do monstro
     monstro -> cooldown = getCooldown(monsterId);   //Devolve o Cooldown do monstro
@@ -119,7 +121,7 @@ int getId(int fase){       //Recebido uma fase, este método realiza o sorteio a
     return 0;
 }
 
-void getImageMonster(int number, ALLEGRO_BITMAP* image){        // Isto procura a imagem de um monstro dado seu id
+void getImageMonster(int number, ALLEGRO_BITMAP** image){        // Isto procura a imagem de um monstro dado seu id
     
     char nome[40], temp[20];
     int width, height;
@@ -205,21 +207,9 @@ void getImageMonster(int number, ALLEGRO_BITMAP* image){        // Isto procura 
             break;
     }
     
-    image = al_create_bitmap(width, height);
+    *image = al_create_bitmap(width, height);
     sprintf (nome, "Graphics/%s.png", temp);
-    image = al_load_bitmap(nome);
-    if(image){
-        printf("Image \"%s\" did not load", nome);
-        image = al_load_bitmap("Graphics/Fly.png");
-
-    }
-
-    al_draw_bitmap(image, 0, 0, 0);
-
-    printf("DrawImage\n");
-
-    al_rest(5);
-
+    *image = al_load_bitmap(nome);
 }
 
 int getLife(int number){        //Este método devolve a vida de um monstro, dado seu id
