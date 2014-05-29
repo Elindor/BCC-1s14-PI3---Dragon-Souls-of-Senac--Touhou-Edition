@@ -106,7 +106,10 @@ int main() {
     al_register_event_source(queue, al_get_display_event_source(display));
 
     al_start_timer(timer);
-
+    
+    
+    // Bob.1.1    seed de rand
+    srand(time(NULL));
     
     /***********************************************************************/
     //      Bob.2.0       Instanciação de variáveis fixas                  //
@@ -144,7 +147,11 @@ int main() {
     int hitx = rand() % (largura);
     int hity = rand() % (altura);
     int currentStage = 1;
-    int respawnTime = 0;
+    int mobLimit = 4;
+    int mobCount = 0;
+    int mobKills = 0;
+    int mobTarget = 20;
+    int respawnTime = -200;
     int playerHP = 100;
 
     multiList *omniList = malloc(sizeof(multiList));
@@ -185,34 +192,37 @@ int main() {
             //       Bob.4.0            Monster Cycles                             //
             /***********************************************************************/
 
-            if(respawnTime >= 200 - (currentStage * 15)){
+            if(respawnTime >= 300 - (currentStage * 18) && mobCount <= mobLimit){
+                mobCount++;
                 spawnMonster(currentStage, omniList);
                 respawnTime = 0;
-                playerHP--;
             }
             
             if(omniList -> primeiroMonstro != NULL){
                 noMonster *temp = malloc(sizeof(noMonster));
                 temp = omniList -> primeiroMonstro;
-                printf("Started monster move sequence\n");
-                al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
                 
                 //Ver aqui
-                /*do{
-                    if(temp -> monster -> ready == false)
-    
-                            //startMove(omniList -> primeiroMonstro -> monster);
+            do{
+
+                if(temp -> monster -> ready != 1){
+                    printf("Started monster move sequence\n");
+                    startMove(temp -> monster);
+
+                }
+                
                         //else if(temp -> monster -> cooldown > temp -> monster -> currentCooldown)
                         //attack sequence
     
-                        al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
-    
-                        if(temp -> prox != NULL);
+                al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
+                        if(temp -> prox != NULL)
                             temp = temp -> prox;
-                        
-                    }while(temp -> prox != NULL);*/
+                }while(temp -> prox != NULL);
                 
             }
+            
+            
+            
 
             if(!HPBarBox)
                 printf("DAMN\n");

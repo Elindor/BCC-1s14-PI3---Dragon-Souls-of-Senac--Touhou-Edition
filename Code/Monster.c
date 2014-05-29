@@ -20,19 +20,19 @@ Monster* initWithMonsterNumber(int fase){
     random = random % 2;
     if(random == 1){
         monstro -> X = -200;
-        monstro -> fromLeft = true;
+        monstro -> fromLeft = 1;
     }
     else{
-        monstro -> X = +200;
-        monstro -> fromLeft = false;
+        monstro -> X = globalLargura + 200;
+        monstro -> fromLeft = 0;
     }
     
     
-    if(monsterId == 1 || monsterId == 4 || monsterId == 5 || monsterId == 9 || monsterId == 10){ // Meele Monster
-        monstro -> Y = globalAltura/4;
+    if(monsterId == 0 || monsterId == 3 || monsterId == 4 || monsterId == 8 || monsterId == 9){ // Meele Monster
+        monstro -> Y = (globalAltura/4) * (float)2.5;
     }
     else{
-        monstro -> Y = rand()%globalAltura;
+        monstro -> Y = rand()% ((globalAltura/4) * 3);
     }
     
     
@@ -45,21 +45,25 @@ Monster* initWithMonsterNumber(int fase){
     monstro -> HP = getLife(monsterId);             //Devolve a vida do monstro
     monstro -> cooldown = getCooldown(monsterId);   //Devolve o Cooldown do monstro
     getAttack(monsterId, monstro -> ataque); // Manda pada o Void o ataque e função preenche vetor.
-    monstro -> ready = false;
+    monstro -> ready = 0;
     
     return monstro;
 }
 
 
 void startMove(Monster* monstro){
+    if(monstro -> ready == 1)
+        return;
     
-    if (monstro -> fromLeft == true)
-        monstro -> X++;
+    if (monstro -> fromLeft == 1)
+        monstro -> X = monstro -> X + 20;
     else
-        monstro -> X--;
+        monstro -> X = monstro -> X - 20;
         
-    if(monstro -> X == 200 || monstro -> X == globalLargura - 200)
-        monstro -> ready = true;
+    if(monstro -> X > 50 && monstro -> X < globalLargura - 200){
+        monstro -> ready = 1;
+        printf("MOVEMENT ENDEEEEEEEEEEEEEED \n");
+    }
     
 }
 
@@ -72,49 +76,49 @@ int getId(int fase){       //Recebido uma fase, este método realiza o sorteio a
     switch(fase){
         case 1:
             if(x < 50)
-                return 1;   // CRAB
+                return 0;   // CRAB
             if(x < 90)
-                return 2;   // FLY
-            return 3;       // BUG
+                return 1;   // FLY
+            return 2;       // BUG
             
         case 2:
             if(x < 65)
-                return 4;   // FAT
+                return 3;   // FAT
             if(x < 95)
-                return 5;   // KOBOLD
-            return 3;       // BUG
+                return 4;   // KOBOLD
+            return 2;       // BUG
             
         case 3:
             if(x < 60)
-                return 6;   // WORM
+                return 5;   // WORM
             if(x < 95)
-                return 7;   // LEECH
-            return 8;       // HORNET
+                return 6;   // LEECH
+            return 7;       // HORNET
             
         case 4:
             if(x < 35)
-                return 9;   // UNDEAD FAT
+                return 8;   // UNDEAD FAT
             if(x < 85)
-                return 10;  // KNIGHT
-            return 11;      // SHADOW
+                return 9;  // KNIGHT
+            return 10;      // SHADOW
             
         case 5:
             if(x < 40)
-                return 11;  // SHADOW
+                return 10;  // SHADOW
             if(x < 30)
-                return 9;   // UNDEAD FAT
-            return 12;      // SPIDER
+                return 8;   // UNDEAD FAT
+            return 11;      // SPIDER
             
         case 6:
             if(x < 60)
-                return 6;   // WORM
+                return 5;   // WORM
             
             x = rand()%100; // Not worm >> Then spawn real monster
             
             if(x < 45)
-                return 11;  // SHADOW
+                return 10;  // SHADOW
             if(x < 50)
-                return 13;  // SENTRY
+                return 12;  // SENTRY
             return 41;      // SUCCUBUS           
     }
 

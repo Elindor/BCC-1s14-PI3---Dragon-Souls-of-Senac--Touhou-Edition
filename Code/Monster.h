@@ -18,8 +18,8 @@ typedef struct _Monster{
     ALLEGRO_BITMAP *image;
     float X;
     float Y;
-    bool fromLeft;
-    bool ready;
+    int fromLeft;
+    int ready;
 }Monster;
 
 typedef struct _noMonster{
