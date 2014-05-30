@@ -135,14 +135,17 @@ int main() {
 
     ALLEGRO_BITMAP *gameScreen = al_create_sub_bitmap(buffer, 0, 0, largura, altura);
 
+    ALLEGRO_BITMAP *stageBackground = NULL;
+    stageBackground = al_load_bitmap("Graphics/BeachSide.png");
+    if(!stageBackground)
+        erro("Erro na criação de background");
+
     /**********/
     
     // Common Items
     srand(time(NULL));
     int desenhar = 0;
     int terminar = 0;
-    int makeOnce = 1;
-    int makeOnce2 = 1;
     int cycle = 0;
     int hitx = rand() % (largura);
     int hity = rand() % (altura);
@@ -184,9 +187,14 @@ int main() {
             break;
 
         if(desenhar && al_is_event_queue_empty(queue)){
-        //Processamento de câmera:
             desenhar = 0;
-            cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen);
+
+            //Draw backgound
+            al_draw_scaled_bitmap(stageBackground, 0, 0,
+                                al_get_bitmap_width(stageBackground),
+                                al_get_bitmap_height(stageBackground),
+                                0, 0, largura, altura, 0);
+
 
             /***********************************************************************/
             //       Bob.4.0            Monster Cycles                             //
@@ -202,24 +210,27 @@ int main() {
                 noMonster *temp = malloc(sizeof(noMonster));
                 temp = omniList -> primeiroMonstro;
                 
-                //Ver aqui
-            do{
+                do{
 
-                if(temp -> monster -> ready != 1){
-                    printf("Started monster move sequence\n");
-                    startMove(temp -> monster);
-
-                }
-                
-                        //else if(temp -> monster -> cooldown > temp -> monster -> currentCooldown)
-                        //attack sequence
+                    if(temp -> monster -> ready != 1){
+                        printf("Started monster move sequence\n");
+                        startMove(temp -> monster);
     
-                al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
-                        if(temp -> prox != NULL)
-                            temp = temp -> prox;
+                    }
+                        
+                    //else if(temp -> monster -> cooldown > temp -> monster -> currentCooldown)
+                    //attack sequence
+            
+                    al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
+
+                    if(temp -> prox != NULL)
+                        temp = temp -> prox;
+
                 }while(temp -> prox != NULL);
-                
             }
+
+            //Processamento de câmera.
+            cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen);
             
             
             
@@ -252,6 +263,7 @@ int main() {
 
     al_destroy_bitmap(gameScreen);
     al_destroy_bitmap(HPBarBox);
+    al_destroy_bitmap(stageBackground);
 
     libera(filaPlayerAtk);
 

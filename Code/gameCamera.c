@@ -76,12 +76,11 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
           	//Espada
           	rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], &h, &s, &v);
 
-          	if(h < 15 || h > 345)
-            	if(s > 75 && v > 75){
-              		cyr += y;
-              		cxr += x;
-              		cnr++;
-            	}
+          	if((h < 15 || h > 345) && s > 75 && v > 75){
+                cyr += y;
+                cxr += x;
+                cnr++;
+            }
 
           	//Silhueta (REFINAR!!!)
           	if(h > 180)
@@ -131,7 +130,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
     }
 
     /**********/
-    camera_copia(cam, cam->quadro, gameScreen);
+    //camera_copia(cam, cam->quadro, gameScreen);
 
     //Copia img editada na img direita
     camera_copia(cam, matriz, silhueta);
