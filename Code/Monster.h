@@ -14,6 +14,7 @@ typedef enum monstro{
 typedef struct _Monster{
     int HP;
     int ataque[2];
+    int currentCooldown;
     float cooldown;         // Somar o periodo dos ataques no uso, lembrar de deletar comentário
     ALLEGRO_BITMAP *image;
     float X;

@@ -46,6 +46,7 @@ Monster* initWithMonsterNumber(int fase){
     monstro -> cooldown = getCooldown(monsterId);   //Devolve o Cooldown do monstro
     getAttack(monsterId, monstro -> ataque); // Manda pada o Void o ataque e função preenche vetor.
     monstro -> ready = 0;
+    monstro -> currentCooldown = 0;
     
     return monstro;
 }
