@@ -1,22 +1,4 @@
-#include <stdio.h>
-#include <math.h>
-
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_primitives.h>
-
-#include "camera.h"
-#include "gameCamera.h"
-
-#import "Ataque.h"
-#import "Monster.h"
-
-#define FPS 60
-
-typedef struct _multiList{
-    noAtaque* primeiroAtaque;
-    noMonster* primeiroMonstro;
-}multiList;
+#include "jogo.h"
 
 void spawnMonster(int currentStage, multiList* lista);
 
@@ -90,6 +72,15 @@ int main() {
     if(!al_init_primitives_addon())
         erro("erro na inicializacao do adicional de primitivas\n");
 
+    if(!al_install_audio())
+        erro("erro na inicialização do addon de audio.\n");
+
+    if(!al_init_acodec_addon())
+        erro("erro na inicializção do acodec.\n");
+
+    if(!al_reserve_samples(1))
+        erro("erro ao alocar canais de áudio.\n");
+
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / FPS);
     if(!timer)
         erro("erro na criacao do relogio\n");
@@ -135,10 +126,7 @@ int main() {
 
     ALLEGRO_BITMAP *gameScreen = al_create_sub_bitmap(buffer, 0, 0, largura, altura);
 
-    ALLEGRO_BITMAP *stageBackground = NULL;
-    stageBackground = al_load_bitmap("Graphics/BeachSide.png");
-    if(!stageBackground)
-        erro("Erro na criação de background");
+    stage *s = NULL;
 
     /**********/
     
@@ -156,6 +144,7 @@ int main() {
     int mobTarget = 20;
     int respawnTime = -200;
     int playerHP = 100;
+    int shouldLoad = 1;
 
     multiList *omniList = malloc(sizeof(multiList));
     omniList -> primeiroMonstro = NULL;
@@ -168,6 +157,18 @@ int main() {
     /***********************************************************************/
     
     while(1) {
+        if(shouldLoad){
+            s = initStageWithNumber(currentStage);
+
+            al_attach_audio_stream_to_mixer(s -> stageAudio, al_get_default_mixer());
+            al_set_audio_stream_playing(s -> stageAudio, true);
+
+            printf("a\n");
+
+            shouldLoad = 0;
+        }
+            
+
         ALLEGRO_EVENT event;
 
         al_wait_for_event(queue, &event);
@@ -190,9 +191,9 @@ int main() {
             desenhar = 0;
 
             //Draw backgound
-            al_draw_scaled_bitmap(stageBackground, 0, 0,
-                                al_get_bitmap_width(stageBackground),
-                                al_get_bitmap_height(stageBackground),
+            al_draw_scaled_bitmap(s -> stageBackground, 0, 0,
+                                al_get_bitmap_width(s -> stageBackground),
+                                al_get_bitmap_height(s -> stageBackground),
                                 0, 0, largura, altura, 0);
 
 
@@ -261,9 +262,11 @@ int main() {
     //   Bob.8.0      LOOPING BREAK -- Starting shutdown                   //
     /***********************************************************************/
 
+    //Somehow crashing...
+    removeStage(s);
+
     al_destroy_bitmap(gameScreen);
     al_destroy_bitmap(HPBarBox);
-    al_destroy_bitmap(stageBackground);
 
     libera(filaPlayerAtk);
 
@@ -283,6 +286,7 @@ int main() {
 
     al_shutdown_primitives_addon();
     al_shutdown_image_addon();
+    al_uninstall_audio();
     al_uninstall_system();
 
     camera_finaliza(cam);
