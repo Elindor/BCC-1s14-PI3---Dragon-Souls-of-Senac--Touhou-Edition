@@ -201,9 +201,9 @@ int main() {
             //       Bob.4.0            Monster Cycles                             //
             /***********************************************************************/
 
-            if(respawnTime >= 300 - (currentStage * 18) && mobCount <= mobLimit){
+            if(respawnTime >= 300 - (s -> stageNum * 18) && mobCount <= s -> limitSpawn){
                 mobCount++;
-                spawnMonster(currentStage, omniList);
+                spawnMonster(s -> stageNum, omniList);
                 respawnTime = 0;
             }
             

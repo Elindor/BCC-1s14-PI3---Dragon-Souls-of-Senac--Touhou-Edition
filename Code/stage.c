@@ -2,6 +2,7 @@
 
 stage *initStageWithNumber(int n){
 	stage *temp = malloc(sizeof(stage));
+    temp -> stageNum = n;
 	temp -> stageBackground = NULL;
 	temp -> stageAudio = NULL;
 	temp -> bossAudio = NULL;
@@ -20,6 +21,10 @@ stage *initStageWithNumber(int n){
 			if(!temp -> bossAudio)
 				erro("Erro na alocação de bossAudio para stage 1\n");
 
+            temp -> targetKills = 20;
+            
+            temp -> limitSpawn = 4;
+            
 			break;
 
 		case 2:
@@ -35,6 +40,10 @@ stage *initStageWithNumber(int n){
 			if(!temp -> bossAudio)
 				erro("Erro na alocação de bossAudio para stage 2\n");
 
+            temp -> targetKills = 40;
+            
+            temp -> limitSpawn = 5;
+            
 			break;
 
 		case 3:
@@ -50,6 +59,10 @@ stage *initStageWithNumber(int n){
 			if(!temp -> bossAudio)
 				erro("Erro na alocação de bossAudio para stage 3\n");
 
+            temp -> targetKills = 70;
+            
+            temp -> limitSpawn = 6;
+            
 			break;
 
 		case 4:
@@ -65,6 +78,9 @@ stage *initStageWithNumber(int n){
 			if(!temp -> bossAudio)
 				erro("Erro na alocação de bossAudio para stage 4\n");
 
+            temp -> targetKills = 100;
+            
+            temp -> limitSpawn = 6;
 			break;
 
 		case 5:
@@ -79,7 +95,11 @@ stage *initStageWithNumber(int n){
 			temp -> bossAudio = al_load_audio_stream("Sound/Balrog.ogg", 4, 1024);
 			if(!temp -> bossAudio)
 				erro("Erro na alocação de bossAudio para stage 5\n");
-
+            
+            temp -> targetKills = 100;
+            
+            temp -> limitSpawn = 6;
+            
 			break;
 
 		case 6:
@@ -97,6 +117,10 @@ stage *initStageWithNumber(int n){
 			if(!temp -> bossAudio)
 				erro("Erro na alocação de bossAudio para stage 6\n");
 
+            temp -> targetKills = 150;
+            
+            temp -> limitSpawn = 7;
+            
 			break;
 	}
 

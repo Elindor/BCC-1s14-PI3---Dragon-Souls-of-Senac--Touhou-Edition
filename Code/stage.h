@@ -15,6 +15,9 @@ typedef struct _stage{
 	ALLEGRO_BITMAP *stageBackground;
 	ALLEGRO_AUDIO_STREAM *stageAudio;
 	ALLEGRO_AUDIO_STREAM *bossAudio;
+    int targetKills;
+    int limitSpawn;
+    int stageNum;
 }stage;
 
 stage *initStageWithNumber(int n);
