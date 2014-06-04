@@ -1,6 +1,7 @@
 #include "jogo.h"
 
 void spawnMonster(int currentStage, multiList* lista);
+void beginAttack(int *attackNumber, int X0, int Y0, multiList* lista);
 
 /*///////////////////////////////////////////////////////////////////////////
 //                Bob.0.0      Glossário - Atalhos
@@ -221,8 +222,11 @@ int main() {
     
                     }
                         
-                    //else if(temp -> monster -> cooldown > temp -> monster -> currentCooldown)
-                    //attack sequence
+                    if(temp -> monster -> cooldown > temp -> monster -> currentCooldown && temp -> monster -> ready == 1){
+                        printf("Generating new attack\n");
+                        beginAttack(temp -> monster -> ataque, temp -> monster -> X, temp -> monster -> Y, omniList);
+                        temp -> monster -> currentCooldown = -0;
+                    }
             
                     al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
 
@@ -231,12 +235,17 @@ int main() {
 
                 }while(temp -> prox != NULL);
             }
+            
+            
+            
+            
+            
 
             //Processamento de câmera.
             cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen, &sx, &sy);
             
             printf("%d, %d\n", sx, sy);
-            al_draw_bitmap(shield, sx, sy, 0);
+            al_draw_bitmap(shield, sx - al_get_bitmap_width(shield), sy - al_get_bitmap_height(shield), 0);
             
 
             if(!HPBarBox)
@@ -349,12 +358,16 @@ void beginAttack(int *attackNumber, int X0, int Y0, multiList* lista){
     else
         chosenAttack = attackNumber[1];
     
-
-    Ataque* novoAtaque = initWithAttackNumber(chosenAttack, X0, Y0);
+    printf("novoAtaque began\n");
     
-    noAtaque* a = malloc(sizeof(Ataque));
+    Ataque* novoAtaque = initWithAttackNumber(chosenAttack, X0, Y0);
+    printf("noAtaque began\n");
+
+    
+    noAtaque* a = malloc(sizeof(noAtaque));
     a -> attack = novoAtaque;
     a -> prox = NULL;
+    printf("Procurando lugar na lista began\n");
     
     //procura lugar na lista
     if(lista -> primeiroAtaque == NULL){
@@ -363,6 +376,7 @@ void beginAttack(int *attackNumber, int X0, int Y0, multiList* lista){
     }
     noAtaque* temp;
     temp = lista -> primeiroAtaque;
+    printf("While began\n");
     
     while (temp -> prox != NULL) {
         temp = temp -> prox;

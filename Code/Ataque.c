@@ -7,14 +7,15 @@ Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     ataque -> Y0 = senderY;
     ataque -> preAnimationTime = 0;
     ataque -> id = attackId;
-    
+    printf("bla\n");
+
     ///
     // Adicionar sistema para geração de (X,Y) finais.
     //
     // if(meele){
     // PreAnimationTime = -40;
-    // ataque -> X = senderX;
-    // ataque -> Y = senderY;
+     ataque -> X = senderX + 200;
+     ataque -> Y = senderY + 200;
     //  }
     // else
     //  do{
@@ -26,18 +27,23 @@ Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
 
     ataque -> currentDuration = 0;
 
-    getImageAttack(attackId, ataque -> image);
+    getImageAttack(attackId, &ataque -> image);
     
     ataque -> duration = getDuration(attackId);
     ataque -> damage = getDamage(attackId);
-    
+    printf("bla\n");
+
     // Realiza a inclinação
     float tempAngle = atan2( (ataque->targetY - ataque->Y0), (ataque->targetX - ataque->X0) );
     ataque -> angle = tempAngle * 3.14 / 180.0;
-    
+    printf("blo\n");
+
+    if(!ataque -> image)
+        printf("Imageless atk\n");
     // Desenha no primeiro frame
-    al_draw_rotated_bitmap(ataque->image, ataque -> X, ataque -> Y, ataque -> X, ataque -> Y, ataque ->angle, 0);
-    
+    al_draw_rotated_bitmap(ataque->image, ataque -> X0, ataque -> Y0, ataque -> X, ataque -> Y, ataque ->angle, 0);
+    printf("blo\n");
+
     return ataque;
 }
 
@@ -71,7 +77,7 @@ bool checkAttack(Ataque *attack){
 }
 
 
-void getImageAttack(int number, ALLEGRO_BITMAP *image){        // Isto procura a imagem de um ataque dado seu id.
+void getImageAttack(int number, ALLEGRO_BITMAP **image){        // Isto procura a imagem de um ataque dado seu id.
     
     char nome[40], temp[20];
     int width, height;
@@ -134,9 +140,9 @@ void getImageAttack(int number, ALLEGRO_BITMAP *image){        // Isto procura a
         width = height = 70;
         break;
     }
-    image = al_create_bitmap(width, height);
+    *image = al_create_bitmap(width, height);
     sprintf (nome, "Graphics/%s.png", temp);
-    image = al_load_bitmap(nome);
+    *image = al_load_bitmap(nome);
 }
 
 int getDamage(int number){        //Este método devolve o dano de um ataque, dado seu id.
