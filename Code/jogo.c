@@ -126,6 +126,8 @@ int main() {
 
     ALLEGRO_BITMAP *gameScreen = al_create_sub_bitmap(buffer, 0, 0, largura, altura);
 
+    ALLEGRO_BITMAP *shield = al_load_bitmap("Graphics/LeatherShield.png");
+
     stage *s = NULL;
 
     /**********/
@@ -146,6 +148,8 @@ int main() {
     int playerHP = 100;
     int shouldLoad = 1;
 
+    int sx, sy;
+
     multiList *omniList = malloc(sizeof(multiList));
     omniList -> primeiroMonstro = NULL;
     
@@ -162,8 +166,6 @@ int main() {
 
             al_attach_audio_stream_to_mixer(s -> stageAudio, al_get_default_mixer());
             al_set_audio_stream_playing(s -> stageAudio, true);
-
-            printf("a\n");
 
             shouldLoad = 0;
         }
@@ -231,9 +233,10 @@ int main() {
             }
 
             //Processamento de câmera.
-            cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen);
+            cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen, &sx, &sy);
             
-            
+            printf("%d, %d\n", sx, sy);
+            al_draw_bitmap(shield, sx, sy, 0);
             
 
             if(!HPBarBox)
@@ -267,6 +270,7 @@ int main() {
 
     al_destroy_bitmap(gameScreen);
     al_destroy_bitmap(HPBarBox);
+    al_destroy_bitmap(shield);
 
     libera(filaPlayerAtk);
 
@@ -285,11 +289,18 @@ int main() {
     al_destroy_timer(timer);
 
     al_shutdown_primitives_addon();
+    printf("a\n");
     al_shutdown_image_addon();
-    al_uninstall_audio();
-    al_uninstall_system();
+    printf("b\n");
+    //al_uninstall_audio();
+    printf("c\n");
+    //al_uninstall_system();
+
+    printf("aqui?\n");
 
     camera_finaliza(cam);
+
+    printf("???\n");
 
     return EXIT_SUCCESS;
 }

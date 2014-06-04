@@ -128,9 +128,28 @@ stage *initStageWithNumber(int n){
 }
 
 void removeStage(stage *s){
+	al_set_audio_stream_playing(s -> stageAudio, false);
+	al_set_audio_stream_playing(s -> bossAudio, false);
+
+	printf("1\n");
+
+	al_drain_audio_stream(s -> stageAudio);
+	al_drain_audio_stream(s -> bossAudio);
+
+	printf("2\n");
+
+	al_detach_audio_stream(s -> stageAudio);
+	al_detach_audio_stream(s -> bossAudio);
+
+	printf("3\n");
+
 	al_destroy_bitmap(s -> stageBackground);
 	al_destroy_audio_stream(s -> stageAudio);
 	al_destroy_audio_stream(s -> bossAudio);
 
+	printf("4\n");
+
 	free(s);
+
+	printf("5\n");
 }

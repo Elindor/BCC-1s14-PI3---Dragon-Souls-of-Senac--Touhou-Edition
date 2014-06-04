@@ -44,7 +44,7 @@ void getBackground(camera *cam, int ***background){
       }
 }
 
-void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background, ALLEGRO_BITMAP *gameScreen){
+void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background, ALLEGRO_BITMAP *gameScreen, int *sx, int *sy){
 	camera_atualiza(cam);
 
 	int x, y;
@@ -69,7 +69,8 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
       lastY = f->fim->y;
     }
 
-    ALLEGRO_BITMAP *silhueta = al_create_bitmap(cam->largura, cam->altura);
+    ALLEGRO_BITMAP *silhueta = al_create_bitmap(cam -> largura, cam -> altura);
+    ALLEGRO_BITMAP *shield = al_create_bitmap(cam -> largura, cam -> altura);
 
     for(y = 0; y < cam->altura; y++){
         for(x = 0; x < cam->largura; x++){
@@ -117,7 +118,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
           	}
 
           	//Escudo
-          	if(h < 135 && h > 105 && s > 50 && v > 75){
+          	if(h < 150 && h > 90 && s > 50 && v > 25){
            		by += y;
            		bx += x;
            		bn++;
@@ -134,12 +135,28 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
 
     //Copia img editada na img direita
     camera_copia(cam, matriz, silhueta);
-    //cor para teste!
+    camera_copia(cam, matriz, shield);
+
     al_convert_mask_to_alpha(silhueta, al_map_rgb(37, 50, 248));
+    al_convert_mask_to_alpha(shield, al_map_rgb(0, 255, 0));
+
     al_draw_bitmap(silhueta, 0, 0, 0);
+    al_draw_bitmap(shield, 0, 0, 0);
     /**********/
 
-    if(cnr > 10){
+    printf("%d\n", bn);
+
+    if(bn > 5){
+        *sx = bx / bn;
+        *sy = bx / bn;
+    }
+
+    else{
+        *sx = 0;
+        *sy = 0;
+    }
+
+    if(cnr > 5){
         x = cxr / cnr;
         y = cyr / cnr;
 

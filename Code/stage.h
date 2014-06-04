@@ -21,6 +21,6 @@ typedef struct _stage{
 }stage;
 
 stage *initStageWithNumber(int n);
-void removeStage();
+void removeStage(stage *s);
 
 #endif
