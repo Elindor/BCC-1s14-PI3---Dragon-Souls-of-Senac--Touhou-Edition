@@ -1,14 +1,4 @@
-#include <opencv/highgui.h>
-
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_primitives.h>
-
-#include <time.h>
-#include "globals.h"
 #include "Monster.h"
-
-
 
 Monster* initWithMonsterNumber(int fase){
     
@@ -376,4 +366,67 @@ float getCooldown(int num){
     }
 
     return 0;
+}
+
+void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
+    unsigned char r, g, b, a;
+
+    ALLEGRO_LOCKED_REGION *lockedDisplay = al_lock_bitmap(display, al_get_bitmap_format(display), ALLEGRO_LOCK_READONLY);
+    ALLEGRO_LOCKED_REGION *lockedMinion = al_lock_bitmap(m -> image, al_get_bitmap_format(m -> image), ALLEGRO_LOCK_READONLY);
+
+    for(int x = 0; x < al_get_bitmap_width(m -> image); x++){
+        for(int y = 0; y < al_get_bitmap_height(m -> image); y++){
+
+            ALLEGRO_COLOR c = al_get_pixel(m -> image, x, y);
+            al_unmap_rgba(c, &r, &g, &b, &a);
+
+            if(a != 0){
+                c = al_get_pixel(display, x + (int)m -> X, y + (int)m -> Y);
+                al_unmap_rgb(c, &r, &g, &b);
+
+                if(r == 255 && g == 0 && b == 0){
+                    printf("acertou!\n");
+                    
+                    if(m -> isHit == 0){
+                        m -> isHit = 1;
+                        m -> HP--;
+                    }
+                }
+            }
+        }
+    }
+
+    /*char *rowD = lockedDisplay -> data;
+    char *rowM = lockedDisplay -> data;
+
+    for(int y = 0; al_get_bitmap_height(m -> image); y++){
+        char *pixelD = rowD;
+        char *pixelM = rowM;
+
+        for(int x = 0; x < al_get_bitmap_width(m -> image); x++){
+            char b = *pixelM;
+            pixelM++;
+
+            char g = *pixelM;
+            pixelM++;
+
+            char r = *pixelM;
+            pixelM++;
+
+            char a = *pixelM;
+            pixelM++;
+
+            printf("%d %d %d %d\n", r, g, b, a);
+        }
+
+        rowM += lockedDisplay -> pitch;
+    }*/
+
+    al_unlock_bitmap(display);
+    al_unlock_bitmap(m -> image);
+
+    if(m -> isHit == 1)
+        m -> isHit = 0;
+
+    printf("miss\n");
 }

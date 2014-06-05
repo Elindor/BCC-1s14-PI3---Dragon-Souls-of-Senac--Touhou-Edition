@@ -15,11 +15,11 @@ stage *initStageWithNumber(int n){
 
 			temp -> stageAudio = al_load_audio_stream("Sound/BeachSide.ogg", 4, 1024);
 			if(!temp -> stageAudio)
-				erro("Erro na alocação de stageAudio para stage 1\n");
+				//erro("Erro na alocação de stageAudio para stage 1\n");
 
 			temp -> bossAudio = al_load_audio_stream("Sound/Marlingone.ogg", 4, 1024);
 			if(!temp -> bossAudio)
-				erro("Erro na alocação de bossAudio para stage 1\n");
+				//erro("Erro na alocação de bossAudio para stage 1\n");
 
             temp -> targetKills = 20;
             
@@ -131,25 +131,15 @@ void removeStage(stage *s){
 	al_set_audio_stream_playing(s -> stageAudio, false);
 	al_set_audio_stream_playing(s -> bossAudio, false);
 
-	printf("1\n");
-
 	al_drain_audio_stream(s -> stageAudio);
 	al_drain_audio_stream(s -> bossAudio);
 
-	printf("2\n");
-
 	al_detach_audio_stream(s -> stageAudio);
 	al_detach_audio_stream(s -> bossAudio);
-
-	printf("3\n");
 
 	al_destroy_bitmap(s -> stageBackground);
 	al_destroy_audio_stream(s -> stageAudio);
 	al_destroy_audio_stream(s -> bossAudio);
 
-	printf("4\n");
-
 	free(s);
-
-	printf("5\n");
 }

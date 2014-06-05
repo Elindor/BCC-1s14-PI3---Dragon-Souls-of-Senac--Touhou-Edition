@@ -165,8 +165,8 @@ int main() {
         if(shouldLoad){
             s = initStageWithNumber(currentStage);
 
-            al_attach_audio_stream_to_mixer(s -> stageAudio, al_get_default_mixer());
-            al_set_audio_stream_playing(s -> stageAudio, true);
+            //al_attach_audio_stream_to_mixer(s -> stageAudio, al_get_default_mixer());
+            //al_set_audio_stream_playing(s -> stageAudio, true);
 
             shouldLoad = 0;
         }
@@ -211,8 +211,7 @@ int main() {
             }
             
             if(omniList -> primeiroMonstro != NULL){
-                noMonster *temp = malloc(sizeof(noMonster));
-                temp = omniList -> primeiroMonstro;
+                noMonster *temp = omniList -> primeiroMonstro;
                 
                 do{
 
@@ -222,11 +221,11 @@ int main() {
     
                     }
                         
-                    if(temp -> monster -> cooldown > temp -> monster -> currentCooldown && temp -> monster -> ready == 1){
+                    /*if(temp -> monster -> cooldown > temp -> monster -> currentCooldown && temp -> monster -> ready == 1){
                         printf("Generating new attack\n");
                         beginAttack(temp -> monster -> ataque, temp -> monster -> X, temp -> monster -> Y, omniList);
                         temp -> monster -> currentCooldown = -0;
-                    }
+                    }*/
             
                     al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
 
@@ -235,17 +234,25 @@ int main() {
 
                 }while(temp -> prox != NULL);
             }
-            
-            
-            
-            
-            
 
             //Processamento de câmera.
             cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen, &sx, &sy);
+
+            //Check hitbox dos monstros
+            /*if(omniList -> primeiroMonstro != NULL){
+                noMonster *temp = omniList -> primeiroMonstro;
+
+                do{
+                    monsterGotHit(gameScreen, temp -> monster);
+
+                    if(temp -> prox != NULL)
+                        temp = temp -> prox;
+
+                }while(temp -> prox != NULL);
+            }*/
             
-            printf("%d, %d\n", sx, sy);
-            al_draw_bitmap(shield, sx - al_get_bitmap_width(shield), sy - al_get_bitmap_height(shield), 0);
+            if(sx > 0 && sy > 0)
+                al_draw_bitmap(shield, sx - al_get_bitmap_width(shield) / 2, sy - al_get_bitmap_height(shield) / 2, 0);
             
 
             if(!HPBarBox)
@@ -298,18 +305,12 @@ int main() {
     al_destroy_timer(timer);
 
     al_shutdown_primitives_addon();
-    printf("a\n");
     al_shutdown_image_addon();
-    printf("b\n");
     //al_uninstall_audio();
-    printf("c\n");
     //al_uninstall_system();
 
-    printf("aqui?\n");
 
     camera_finaliza(cam);
-
-    printf("???\n");
 
     return EXIT_SUCCESS;
 }

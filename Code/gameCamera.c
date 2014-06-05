@@ -118,7 +118,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
           	}
 
           	//Escudo
-          	if(h < 150 && h > 90 && s > 50 && v > 25){
+          	if(h < 180 && h > 120 && s > 50 && v > 75){
            		by += y;
            		bx += x;
            		bn++;
@@ -144,16 +144,14 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
     al_draw_bitmap(shield, 0, 0, 0);
     /**********/
 
-    printf("%d\n", bn);
-
-    if(bn > 5){
+    if(bn > 125){
         *sx = bx / bn;
-        *sy = bx / bn;
+        *sy = by / bn;
     }
 
     else{
-        *sx = 0;
-        *sy = 0;
+        *sx = -1;
+        *sy = -1;
     }
 
     if(cnr > 5){
@@ -186,6 +184,7 @@ void drawAtk(fila *f){
 
     	while(e1 != NULL && e2 != NULL){
       		al_draw_line(e1->x, e1->y, e2->x, e2->y, al_map_rgba(255, 0, 0, alpha), 3);
+
       		e1 = e2;
       		e2 = e2->prox;
 

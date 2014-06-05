@@ -5,6 +5,11 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 
+#include <opencv/highgui.h>
+
+#include <time.h>
+#include "globals.h"
+#include "Monster.h"
 
 
 typedef enum monstro{
@@ -21,6 +26,7 @@ typedef struct _Monster{
     float Y;
     int fromLeft;
     int ready;
+    int isHit;
 }Monster;
 
 typedef struct _noMonster{
@@ -36,5 +42,6 @@ void getImageMonster(int number, ALLEGRO_BITMAP** image);
 int getLife(int number);
 void getAttack(int fase, int *num);
 float getCooldown(int num);
+void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m);
 
 #endif
