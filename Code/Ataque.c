@@ -1,4 +1,5 @@
 #include "Ataque.h"
+#include "globals.h"
 
 Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     Ataque *ataque = malloc(sizeof(Ataque));
@@ -6,7 +7,8 @@ Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     ataque -> X0 = senderX;
     ataque -> Y0 = senderY;
     ataque -> preAnimationTime = 0;
-    ataque -> id = attackId;
+    ataque -> atkId = attackId;
+    ataque -> deathCountdown = 0;
     printf("bla\n");
 
     ///
@@ -14,8 +16,8 @@ Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     //
     // if(meele){
     // PreAnimationTime = -40;
-     ataque -> X = senderX + 200;
-     ataque -> Y = senderY + 200;
+     ataque -> targetX = rand()%globalLargura;
+     ataque -> targetY = rand()%globalAltura;
     //  }
     // else
     //  do{
@@ -26,23 +28,20 @@ Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     ///
 
     ataque -> currentDuration = 0;
-
+    ataque -> image = NULL;
     getImageAttack(attackId, &ataque -> image);
     
     ataque -> duration = getDuration(attackId);
     ataque -> damage = getDamage(attackId);
-    printf("bla\n");
 
     // Realiza a inclinação
-    float tempAngle = atan2( (ataque->targetY - ataque->Y0), (ataque->targetX - ataque->X0) );
-    ataque -> angle = tempAngle * 3.14 / 180.0;
-    printf("blo\n");
+    ataque -> angle = atan2( (ataque->targetY - ataque->Y0), (ataque->targetX - ataque->X0) );
 
     if(!ataque -> image)
         printf("Imageless atk\n");
     // Desenha no primeiro frame
-    al_draw_rotated_bitmap(ataque->image, ataque -> X0, ataque -> Y0, ataque -> X, ataque -> Y, ataque ->angle, 0);
-    printf("blo\n");
+    printf("Angle: %f\n", ataque -> angle);
+    al_draw_rotated_bitmap(ataque -> image, 0, 0, ataque -> X + al_get_bitmap_width(ataque -> image), ataque -> Y + al_get_bitmap_height(ataque -> image), ataque -> angle, 0);
 
     return ataque;
 }
@@ -52,16 +51,18 @@ bool checkAttack(Ataque *attack){
     if (attack -> preAnimationTime < 0) // Em geral, o tempo antes da ativação do ataque. Pra meele e alguns casos especiais. Ele é um contador externo à animação.
         attack -> preAnimationTime++;
     else{
+
+        
         if(attack -> currentDuration != attack -> duration)
-            attack -> currentDuration++;
-        else{
+            attack -> currentDuration ++;
+        
+        
+        attack -> X = attack -> X0 + ( (attack -> targetX - attack -> X0) * (attack -> currentDuration / attack -> duration));
+        attack -> Y = attack -> Y0 + ( (attack -> targetY - attack -> Y0) * (attack -> currentDuration / attack -> duration));
             
-            attack -> X = attack -> X0 + ( ( (attack -> targetX - attack -> X0) / attack -> duration) * attack -> currentDuration);
-            attack -> Y = attack -> Y0 + ( ( (attack -> targetY - attack -> Y0) / attack -> duration) * attack -> currentDuration);
-            
-            
-            
-            al_draw_rotated_bitmap(attack -> image, attack -> X, attack -> Y, attack -> X, attack -> Y, attack ->angle, 0);
+        al_draw_rotated_bitmap(attack -> image, 0, 0, attack -> X, attack -> Y, attack -> angle, 0);
+        
+
             /*al_draw_rotated_bitmap(ALLEGRO_BITMAP *bitmap, float cx, float cy, float dx, float dy, float angle, int flags);*/
             
             //if(ponto em X,Y MATRIZ GLOBAL == BRANCA || ponto em X,Y MATRIZ GLOBAL != Shield)
@@ -69,9 +70,8 @@ bool checkAttack(Ataque *attack){
             //Hit, sounds, etc...
                 
             
-            free(attack);
+            //free(attack);
             return true;
-        }
     }
     return false;
 }
@@ -145,6 +145,7 @@ void getImageAttack(int number, ALLEGRO_BITMAP **image){        // Isto procura 
     *image = al_load_bitmap(nome);
 }
 
+
 int getDamage(int number){        //Este método devolve o dano de um ataque, dado seu id.
     
     switch(number){
@@ -195,13 +196,13 @@ float getDuration(int num){      //Este metodo devolve qual o tempo de animaçã
 
     switch(num){
         case Pincer:
-            return 2;
+            return 60;
 
         case Spit:
-            return 4;
+            return 40;
 
         case Needle:
-            return 2;
+            return 20;
 
         case Cut:
             return 2;

@@ -1,7 +1,8 @@
 #include "jogo.h"
 
 void spawnMonster(int currentStage, multiList* lista);
-void beginAttack(int *attackNumber, int X0, int Y0, multiList* lista);
+int beginAttack(int *attackNumber, int X0, int Y0, multiList* lista);
+void dismissAttack(multiList *list, noAtaque *noAtk);
 
 /*///////////////////////////////////////////////////////////////////////////
 //                Bob.0.0      Glossário - Atalhos
@@ -81,6 +82,12 @@ int main() {
 
     if(!al_reserve_samples(1))
         erro("erro ao alocar canais de áudio.\n");
+    
+    //ALLEGRO_FONT *fonte = NULL;
+    //fonte = al_load_font("BRADHITC.TTF", 48, 0);
+    //if(!fonte)
+    //    erro("erro na criacao da fonte\n");
+    
 
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / FPS);
     if(!timer)
@@ -117,6 +124,8 @@ int main() {
     
     // Allegro Items
     ALLEGRO_COLOR cor = al_map_rgb_f(1, 0, 0);
+    ALLEGRO_COLOR cinza = al_map_rgb_f(0.6, 0.6, 0.6);
+
     
     ALLEGRO_COLOR cor2 = al_map_rgb_f(0, 0, 1);
 
@@ -147,12 +156,16 @@ int main() {
     int mobTarget = 20;
     int respawnTime = -200;
     int playerHP = 100;
+    int barrier = 20;
     int shouldLoad = 1;
+    int bossBattle = 0;
 
     int sx, sy;
 
     multiList *omniList = malloc(sizeof(multiList));
     omniList -> primeiroMonstro = NULL;
+    omniList -> primeiroAtaque = NULL;
+
     
 
     fila *filaPlayerAtk = aloca();
@@ -165,8 +178,8 @@ int main() {
         if(shouldLoad){
             s = initStageWithNumber(currentStage);
 
-            //al_attach_audio_stream_to_mixer(s -> stageAudio, al_get_default_mixer());
-            //al_set_audio_stream_playing(s -> stageAudio, true);
+            al_attach_audio_stream_to_mixer(s -> stageAudio, al_get_default_mixer());
+            al_set_audio_stream_playing(s -> stageAudio, true);
 
             shouldLoad = 0;
         }
@@ -204,11 +217,15 @@ int main() {
             //       Bob.4.0            Monster Cycles                             //
             /***********************************************************************/
 
+            // Bob.4.1 Monster Spawning
+            
             if(respawnTime >= 300 - (s -> stageNum * 18) && mobCount <= s -> limitSpawn){
                 mobCount++;
                 spawnMonster(s -> stageNum, omniList);
                 respawnTime = 0;
             }
+            
+            // Bob.4.2 Monster cycle itself - movement, attack spawning, checking if alive
             
             if(omniList -> primeiroMonstro != NULL){
                 noMonster *temp = omniList -> primeiroMonstro;
@@ -216,16 +233,15 @@ int main() {
                 do{
 
                     if(temp -> monster -> ready != 1){
-                        printf("Started monster move sequence\n");
                         startMove(temp -> monster);
     
                     }
-                        
-                    /*if(temp -> monster -> cooldown > temp -> monster -> currentCooldown && temp -> monster -> ready == 1){
+                    temp-> monster -> currentCooldown++;
+                    if(temp -> monster -> cooldown * 10 < temp -> monster -> currentCooldown && temp -> monster -> ready == 1){
                         printf("Generating new attack\n");
-                        beginAttack(temp -> monster -> ataque, temp -> monster -> X, temp -> monster -> Y, omniList);
-                        temp -> monster -> currentCooldown = -0;
-                    }*/
+                        temp -> monster -> currentCooldown = -beginAttack(temp -> monster -> ataque, temp -> monster -> centerX, temp -> monster -> centerY, omniList);
+                       
+                    }
             
                     al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
 
@@ -235,6 +251,62 @@ int main() {
                 }while(temp -> prox != NULL);
             }
 
+            
+            // Bob.4.3 Monster Attack Cycles - move, check strike
+            
+            if(omniList -> primeiroAtaque != NULL){
+                noAtaque *temp = omniList -> primeiroAtaque;
+                
+                do{
+                    if(temp -> attack -> currentDuration < 10){
+                        al_draw_filled_circle(temp -> attack -> targetX, temp -> attack -> targetY, 40, cor);
+                    }
+                    // Move ataque
+                    if(temp -> attack -> duration > temp -> attack -> currentDuration){
+                        checkAttack(temp -> attack);
+                    }
+                    
+                    // HIT
+                    else{
+                        if(temp -> attack -> deathCountdown == 0){
+                            
+                            //Damage things
+                            
+                            if(barrier >= 1){    //Se houver barreira, tem todo esse paranauê
+                                barrier -=temp -> attack -> damage;
+                                if(barrier < 0){
+                                    playerHP += barrier;
+                                    barrier = 0;
+                                }
+                            }
+                            else // Senão é bem simples
+                                playerHP -= temp -> attack -> damage;
+
+                            
+                        }
+                          temp -> attack -> deathCountdown++;
+                    }
+                    
+                    // Attack dealloc
+                    
+                    noAtaque *tempForDelete = NULL;
+                    if(temp -> attack -> deathCountdown >= 5){
+                        tempForDelete = temp;
+                    }
+                    
+                    // attack list scrolling
+                    if(temp -> prox != NULL)
+                        temp = temp -> prox;
+                    
+                    if(tempForDelete != NULL){
+                        dismissAttack(omniList, tempForDelete);
+                        printf("Attack successfully dismissed\n");
+                    }
+                    
+                }while(temp -> prox != NULL);
+            }
+            
+            
             //Processamento de câmera.
             cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen, &sx, &sy);
 
@@ -251,15 +323,69 @@ int main() {
                 }while(temp -> prox != NULL);
             }*/
             
-            if(sx > 0 && sy > 0)
-                al_draw_bitmap(shield, sx - al_get_bitmap_width(shield) / 2, sy - al_get_bitmap_height(shield) / 2, 0);
             
+            
+            
+            if(sx > 0 && sy > 0)
+                //al_draw_bitmap(shield, sx - al_get_bitmap_width(shield) / 2, sy - al_get_bitmap_height(shield) / 2, 0);
+                al_draw_tinted_bitmap(shield, al_map_rgba_f(1, 1, 1, 0.6), sx - al_get_bitmap_width(shield) / 2, sy - al_get_bitmap_height(shield) / 2, 0);
 
+            
+            /***********************************************************************/
+            //       Bob.6.0            Interface Cycles, bitches                  //
+            /***********************************************************************/
+            
+            
+            if(bossBattle == 0){
+                //al_draw_text(fonte, al_map_rgb(0, 0, 255), largura - 75, 20, ALLEGRO_ALIGN_RIGHT,
+               //              "/ %d", s -> limitSpawn)
+                //al_draw_text(fonte, al_map_rgb(0, 0, 255), largura - 60, 20, 0,
+               //              "/ %d", s -> limitSpawn)
+            }
+            else{
+                al_draw_filled_rectangle(41, 79, (1 * (largura - 82) + 41),  51, cor);
+                
+                al_draw_scaled_bitmap(HPBarBox,
+                                      0, 0,
+                                      al_get_bitmap_width(HPBarBox),
+                                      al_get_bitmap_height(HPBarBox),
+                                      40, 50,
+                                      largura - 80, 30,
+                                      0);
+            }
+            
+            
             if(!HPBarBox)
                 printf("DAMN\n");
             
             float tempHP = (float) playerHP / 100;
-            al_draw_filled_rectangle(41, altura - 79, (tempHP * (largura - 41)), altura - 51, cor);
+            float tempbarrier = (float) barrier / 100;
+            
+            //Barrier bar drawing
+            
+            /*
+             
+             //CASO COM OUTRA BARRA
+            if(barrier >= 1){
+                al_draw_filled_rectangle(41, altura - 129, (tempbarrier * (largura - 41)), altura - 101, cinza);
+                
+                al_draw_scaled_bitmap(HPBarBox,
+                                      0, 0,
+                                      al_get_bitmap_width(HPBarBox),
+                                      al_get_bitmap_height(HPBarBox),
+                                      40, altura - 130,
+                                      largura - 80, 30,
+                                      0);
+            }
+            */
+            
+            
+            // Hp drawing
+            if(playerHP >= 1)
+                al_draw_filled_rectangle(41, altura - 79, (tempHP * (largura - 82) + 41), altura - 51, cor);
+            //CASO SEM OUTRA BARRA
+            if(barrier >= 1)
+                al_draw_filled_rectangle(41, altura - 79, (tempbarrier * (largura - 82) + 41), altura - 51, cinza);
             
             al_draw_scaled_bitmap(HPBarBox,
                                   0, 0,
@@ -324,14 +450,12 @@ int main() {
 void spawnMonster(int currentStage, multiList* lista){
     Monster* minion = initWithMonsterNumber(currentStage);
     
-    printf("A monster has spawned!\n");
     noMonster* m = malloc(sizeof(noMonster));
     m -> monster = minion;
     m -> prox = NULL;
 
     //Procura lugar na lista
     if(lista -> primeiroMonstro == NULL){
-        printf("Should be here!\n");
 
         lista -> primeiroMonstro = m;
         return;
@@ -339,19 +463,19 @@ void spawnMonster(int currentStage, multiList* lista){
 
     noMonster* temp;
     temp = lista -> primeiroMonstro;
-    printf("HU3!\n");
 
     while(temp -> prox != NULL) {
-        printf("lolz!\n");
         temp = temp -> prox;
     }
-    printf("HU3!\n");
 
     temp -> prox = m;
-    printf("With no bugs at all on the way\n");
+    printf("A new Monster has successfully spawned\n");
 }
 
-void beginAttack(int *attackNumber, int X0, int Y0, multiList* lista){
+
+// Bob.9.3 - spawn attack
+
+int beginAttack(int *attackNumber, int X0, int Y0, multiList* lista){
     int chosenAttack;
     int randomizer = (rand() % 60) % 4;
     if(randomizer != 0)
@@ -359,35 +483,58 @@ void beginAttack(int *attackNumber, int X0, int Y0, multiList* lista){
     else
         chosenAttack = attackNumber[1];
     
-    printf("novoAtaque began\n");
-    
     Ataque* novoAtaque = initWithAttackNumber(chosenAttack, X0, Y0);
-    printf("noAtaque began\n");
 
     
     noAtaque* a = malloc(sizeof(noAtaque));
     a -> attack = novoAtaque;
     a -> prox = NULL;
-    printf("Procurando lugar na lista began\n");
     
     //procura lugar na lista
     if(lista -> primeiroAtaque == NULL){
         lista -> primeiroAtaque = a;
-        return;
+        return a -> attack -> duration;
     }
     noAtaque* temp;
     temp = lista -> primeiroAtaque;
-    printf("While began\n");
     
-    while (temp -> prox != NULL) {
+    while(temp -> prox != NULL) {
         temp = temp -> prox;
     }
-    
+
     temp -> prox = a;
-    
+    printf("A new attack has successfully spawned\n");
+    return a -> attack -> duration;
 }
 
+// Bob.9.4 - dismiss attack
 
+void dismissAttack(multiList *list, noAtaque *noAtk){
+    noAtaque *temp = list -> primeiroAtaque;
+    
+    if(!temp)
+        return;
+    
+    if(temp == noAtk){
+        list -> primeiroAtaque = temp -> prox;
+        al_destroy_bitmap(noAtk -> attack -> image);
+        free(noAtk -> attack);
+        free(noAtk);
+        return;
+    }
+    
+    
+    while(temp -> prox != noAtk)
+        temp = temp -> prox;
+    
+    temp -> prox = temp -> prox -> prox;
+    
+    al_destroy_bitmap(noAtk -> attack -> image);
+    free(noAtk -> attack);
+    free(noAtk);
+
+    
+}
 
 
 

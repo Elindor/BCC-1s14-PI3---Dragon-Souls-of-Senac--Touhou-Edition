@@ -24,6 +24,8 @@ typedef struct _Monster{
     ALLEGRO_BITMAP *image;
     float X;
     float Y;
+    float centerX;
+    float centerY;
     int fromLeft;
     int ready;
     int isHit;

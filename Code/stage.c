@@ -15,11 +15,11 @@ stage *initStageWithNumber(int n){
 
 			temp -> stageAudio = al_load_audio_stream("Sound/BeachSide.ogg", 4, 1024);
 			if(!temp -> stageAudio)
-				//erro("Erro na alocação de stageAudio para stage 1\n");
+				erro("Erro na alocação de stageAudio para stage 1\n");
 
 			temp -> bossAudio = al_load_audio_stream("Sound/Marlingone.ogg", 4, 1024);
 			if(!temp -> bossAudio)
-				//erro("Erro na alocação de bossAudio para stage 1\n");
+				erro("Erro na alocação de bossAudio para stage 1\n");
 
             temp -> targetKills = 20;
             

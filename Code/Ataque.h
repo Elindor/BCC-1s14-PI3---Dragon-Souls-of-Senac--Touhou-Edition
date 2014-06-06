@@ -20,12 +20,13 @@ typedef struct _Ataque{
     float targetX;
     float targetY;
     int damage;
+    int deathCountdown;
     int currentDuration;
     float preAnimationTime;
     float duration;
     ALLEGRO_BITMAP *image;
     float angle;
-    int id;
+    int atkId;
     
 }Ataque;
 
