@@ -136,6 +136,8 @@ int main() {
     HPBarBox = al_load_bitmap("Graphics/hpBar.png");
 
     ALLEGRO_BITMAP *gameScreen = al_create_sub_bitmap(buffer, 0, 0, largura, altura);
+    
+    ALLEGRO_BITMAP *smoke = al_load_bitmap("Graphics/smoke.png");
 
     ALLEGRO_BITMAP *shield = al_load_bitmap("Graphics/LeatherShield.png");
 
@@ -158,7 +160,10 @@ int main() {
     int playerHP = 100;
     int barrier = 20;
     int shouldLoad = 1;
-    currentStage = 1;
+    int bossFight = 0;
+    int stageChangeCountdown = 0;
+    int stageWillChange = 0;
+    currentStage = 4;
 
     int sx, sy;
 
@@ -177,8 +182,9 @@ int main() {
     while(1) {
         if(shouldLoad){
             s = initStageWithNumber(currentStage);
-
+            
             al_attach_audio_stream_to_mixer(s -> stageAudio, al_get_default_mixer());
+            al_set_audio_stream_playing(s -> bossAudio, false);
             al_set_audio_stream_playing(s -> stageAudio, true);
 
             shouldLoad = 0;
@@ -259,6 +265,20 @@ int main() {
             
             // Bob.4.3 Boss cycles - Also phantoms
             
+            if(omniList -> boss == NULL && omniList -> primeiroMonstro == NULL && mobCount == s -> limitSpawn){
+                //Spawns boss
+                if(respawnTime < 10300){        //Desliga musica, seta 300 ciclos de espera
+                    respawnTime = 10000;
+                    al_set_audio_stream_playing(s -> stageAudio, false);
+                }
+                else{                           //liga musica, BEGIN
+                    Monster* CHEFE = initWithBossNumber(20 + currentStage);
+                    omniList -> boss = CHEFE;
+                    al_set_audio_stream_playing(s -> bossAudio, true);
+                    bossFight == 1;
+                }
+            }
+            
             if(omniList -> boss != NULL) {
                 startMove(omniList -> boss);
                 omniList -> boss -> currentCooldown++;
@@ -267,6 +287,13 @@ int main() {
                     omniList -> boss -> currentCooldown = -beginAttack(omniList -> boss -> ataque, omniList -> boss -> centerX, omniList -> boss -> centerY, omniList);
                 }
                 al_draw_bitmap(omniList -> boss -> image, omniList -> boss -> X, omniList -> boss -> Y, 0);
+            }
+            
+            if(bossFight == 1 && omniList -> boss == NULL){
+                bossFight == 0;
+                respawnTime == -300;
+                currentStage++;
+                stageWillChange == 1
             }
             
             
@@ -419,6 +446,34 @@ int main() {
                                   largura - 80, 30,
                                   0);
 
+            if(stageWillChange == 1){
+                stageChangeCountdown ++;
+                if(stageChangeCountdown < 100){
+                    transparency = (float)stageChangeCountdown / 100;
+                }
+                else if(stageChangeCountdown < 400){
+                    transparency = 1;
+                }
+                else{
+                    transparency = (float)(500 - stageChangeCountdown) / 100;
+                }
+                
+                al_draw_tinted_scaled_bitmap(smoke, (1, 1, 1, transparency),
+                                             0, 0,
+                                             al_get_bitmap_width(s -> stageBackground),
+                                             al_get_bitmap_height(s -> stageBackground),
+                                             0, 0, largura, altura, 0);
+                if(stageChangeCountdown == 400)
+                    shouldLoad = 1;
+                if(stageChangeCountdown == 500){
+                    stageWillChange = 0;
+                    stageChangeCountdown = 0;
+                }
+                
+                
+            }
+            
+            
             al_flip_display();
         }
         
