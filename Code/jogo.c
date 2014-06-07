@@ -163,7 +163,8 @@ int main() {
     int bossFight = 0;
     int stageChangeCountdown = 0;
     int stageWillChange = 0;
-    currentStage = 4;
+    float transparency;
+    currentStage = 1;
 
     int sx, sy;
 
@@ -275,7 +276,7 @@ int main() {
                     Monster* CHEFE = initWithBossNumber(20 + currentStage);
                     omniList -> boss = CHEFE;
                     al_set_audio_stream_playing(s -> bossAudio, true);
-                    bossFight == 1;
+                    bossFight = 1;
                 }
             }
             
@@ -290,10 +291,10 @@ int main() {
             }
             
             if(bossFight == 1 && omniList -> boss == NULL){
-                bossFight == 0;
-                respawnTime == -300;
+                bossFight = 0;
+                respawnTime = -300;
                 currentStage++;
-                stageWillChange == 1
+                stageWillChange = 1;
             }
             
             
@@ -359,20 +360,7 @@ int main() {
             
             
             //Processamento de câmera.
-            cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen, &sx, &sy);
-
-            //Check hitbox dos monstros
-            /*if(omniList -> primeiroMonstro != NULL){
-                noMonster *temp = omniList -> primeiroMonstro;
-
-                do{
-                    monsterGotHit(gameScreen, temp -> monster);
-
-                    if(temp -> prox != NULL)
-                        temp = temp -> prox;
-
-                }while(temp -> prox != NULL);
-            }*/
+            cameraLoop(matriz, cam, filaPlayerAtk, background, buffer, &sx, &sy);
             
             
             
@@ -458,7 +446,7 @@ int main() {
                     transparency = (float)(500 - stageChangeCountdown) / 100;
                 }
                 
-                al_draw_tinted_scaled_bitmap(smoke, (1, 1, 1, transparency),
+                al_draw_tinted_scaled_bitmap(smoke, al_map_rgba_f(1, 1, 1, transparency),
                                              0, 0,
                                              al_get_bitmap_width(s -> stageBackground),
                                              al_get_bitmap_height(s -> stageBackground),
@@ -469,12 +457,24 @@ int main() {
                     stageWillChange = 0;
                     stageChangeCountdown = 0;
                 }
-                
-                
             }
-            
+
             
             al_flip_display();
+
+
+            //check minion hitbox
+            if(omniList -> primeiroMonstro != NULL){
+                noMonster *temp = omniList -> primeiroMonstro;
+
+                do{
+                    monsterGotHit(buffer, temp -> monster);
+
+                    if(temp -> prox != NULL)
+                        temp = temp -> prox;
+
+                }while(temp -> prox != NULL);
+            }
         }
         
         respawnTime++;

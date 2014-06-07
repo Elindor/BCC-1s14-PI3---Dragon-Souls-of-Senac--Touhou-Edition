@@ -375,24 +375,34 @@ int getLife(int number){        //Este método devolve a vida de um monstro, dad
             
         case Marlingone:
             return 100;
+
         case Hueda:
             return 160;
+
         case Cirno:
             return 120;
+
         case Dragon:
             return 200;
+
         case Balrog:
             return 400;
+
         case Lavos:
             return 1000;
+
         case Phantom2:
             return 94;
+
         case Phantom3:
             return 132;
+
         case Phantom4:
             return 187;
+
         case Phantom5:
             return 246;
+
         case Phantom6:
             return 300;
     }
@@ -467,46 +477,57 @@ void getAttack(int fase, int *num){      //Este metodo devolve quais ataques o m
             num[0] = 13;
             num[1] = 9;
             return;
+
         case Marlingone:
             num[0] = 13;
             num[1] = 11;
             return;
+
         case Hueda:
             num[0] = 4;
             num[1] = 5;
             return;
+
         case Cirno:
             num[0] = 6;
             num[1] = 11;
             return;
+
         case Dragon:
             num[0] = 13;
             num[1] = 10;
             return;
+
         case Balrog:
             num[0] = 10;
             num[1] = 13;
             return;
+
         case Lavos:
             num[0] = 11;
             num[1] = 13;
             return;
+
         case Phantom2:
             num[0] = 4;
             num[1] = 6;
             return;
+
         case Phantom3:
             num[0] = 9;
             num[1] = 5;
             return;
+
         case Phantom4:
             num[0] = 9;
             num[1] = 9;
             return;
+
         case Phantom5:
             num[0] = 11;
             num[1] = 9;
             return;
+
         case Phantom6:
             num[0] = 9;
             num[1] = 13;
@@ -557,24 +578,34 @@ float getCooldown(int num){
             
         case Marlingone:
             return 3;
+
         case Hueda:
             return 5;
+
         case Cirno:
             return 1;
+
         case Dragon:
             return 2;
+
         case Balrog:
             return 2;
+
         case Lavos:
             return 3;
+
         case Phantom2:
             return 2;
+
         case Phantom3:
             return 1;
+
         case Phantom4:
             return 1;
+
         case Phantom5:
             return 0;
+
         case Phantom6:
             return -1;
     }
@@ -588,43 +619,116 @@ void getName(int num, char *temp){
         case Marlingone:
             sprintf (temp, "Old Sorcerer Marlingone");
             break;
+
         case Hueda:
             sprintf (temp, "Troll Chieftain Hu3Hu3da");
             break;
+
         case Cirno:
             sprintf (temp, "Ice Fairy Cirno");
             break;
+
         case Dragon:
             sprintf (temp, "Guardian Dragon");
             break;
+
         case Balrog:
             sprintf (temp, "Great Demon Balrog");
             break;
+
         case Lavos:
             sprintf (temp, "Lavos");
             break;
+
         case Phantom2:
             sprintf (temp, "Dark Phantom xXxAteYourMomxXx");
             break;
+
         case Phantom3:
             sprintf (temp, "Dark Phantom FrostQueen_GGWP");
             break;
+
         case Phantom4:
             sprintf (temp, "Dark Phantom LegendaryRankDude");
             break;
+
         case Phantom5:
             sprintf (temp, "Dark Phantom RussiaDotAPlayer");
             break;
+
         case Phantom6:
             sprintf (temp, "Dark Phantom Fluttershy");
             break;
-
     }
 }
 
+void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
+    unsigned char rd, gd, bd, am;
 
+    ALLEGRO_LOCKED_REGION *lockedDisplay = al_lock_bitmap(display, ALLEGRO_PIXEL_FORMAT_ARGB_8888, ALLEGRO_LOCK_READONLY);
+    ALLEGRO_LOCKED_REGION *lockedMinion = al_lock_bitmap(m -> image, ALLEGRO_PIXEL_FORMAT_ARGB_8888, ALLEGRO_LOCK_READONLY);
 
+    //tipo = abgr8888, pitch = variável, pixel_size = 4
 
+    int hm = al_get_bitmap_height(m -> image);
+    int wm = al_get_bitmap_width(m -> image);
+    int hd = al_get_bitmap_height(display);
+    int wd = al_get_bitmap_width(display);
 
+    unsigned char *rowM = lockedMinion -> data;
+    unsigned char *rowD = lockedDisplay -> data;
 
+    rowD += lockedDisplay -> pitch * (int)m -> Y;
 
+    for(int y = 0; y < hm; y++){
+        unsigned char *pixelM = rowM;
+        unsigned char *pixelD = rowD + (4 * (int)m -> X);
+
+        for(int x = 0; x < wm; x++){
+            pixelM += 3;
+            am = *pixelM;
+            pixelM++;
+
+            if(am > 0 && y + m -> Y >= 0 && y + m -> Y < hd && x + m -> X >= 0 && x + m -> X < wd){
+                bd = *pixelD;
+                pixelD++;
+
+                gd = *pixelD;
+                pixelD++;
+
+                rd = *pixelD;
+                pixelD++;
+
+                am = *pixelD;
+                pixelD++;
+
+                if(rd == 255 && gd == 0 && bd == 0){
+                    printf("vermelho!\n");
+                    if(m -> isHit == 0){
+                        printf("acertou minion!\n");
+
+                        m -> isHit = 1;
+                        m -> HP--;
+                    }
+
+                    al_unlock_bitmap(display);
+                    al_unlock_bitmap(m -> image);
+
+                    return;
+                }
+            }
+
+            else
+                pixelD += 4;
+        }
+
+        rowM += lockedMinion -> pitch;
+        rowD += lockedDisplay -> pitch;
+    }
+
+    al_unlock_bitmap(display);
+    al_unlock_bitmap(m -> image);
+
+    if(m -> isHit == 1)
+        m -> isHit = 0;
+}
