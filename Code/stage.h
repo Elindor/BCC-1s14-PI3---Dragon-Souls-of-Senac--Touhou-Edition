@@ -18,6 +18,8 @@ typedef struct _stage{
     int targetKills;
     int limitSpawn;
     int stageNum;
+    int darkPhantom;    // Has a 0 if none, has his number if has
+    int darkSpawn;
 }stage;
 
 stage *initStageWithNumber(int n);

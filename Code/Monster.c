@@ -15,7 +15,6 @@ Monster* initWithMonsterNumber(int fase){
     int monsterId = getId(fase);    //Recebe um ID de monstro gerado aleatóriamente baseado na fase
     Monster *monstro = malloc(sizeof(Monster));
     
-    
     int random = rand()%180;    // X é definido aleatóriamente (lado ou não lado?)
     random = random % 2;
     if(random == 1){
@@ -48,6 +47,41 @@ Monster* initWithMonsterNumber(int fase){
     getAttack(monsterId, monstro -> ataque); // Manda pada o Void o ataque e função preenche vetor.
     monstro -> ready = 0;
     monstro -> currentCooldown = 0;
+    sprintf (monstro -> name, "\n");
+    
+    monstro -> centerX = monstro -> X + (al_get_bitmap_width(monstro -> image) /2);
+    monstro -> centerY = monstro -> Y + (al_get_bitmap_height(monstro -> image) /2);
+    return monstro;
+}
+
+Monster* initWithBossNumber(int fase){
+    
+    int monsterId = fase;
+    Monster *monstro = malloc(sizeof(Monster));
+    
+    
+    monstro -> X = globalLargura/2;
+    
+    if(monsterId == 0 || monsterId == 3 || monsterId == 4 || monsterId == 8 || monsterId == 9){ // Meele Monster
+        monstro -> Y = (globalAltura/4) * (float)2.5;
+    }
+    else{
+        monstro -> Y = globalAltura + 400;
+    }
+    monstro -> fromLeft = 2;
+    
+    monstro -> image = NULL;
+    getImageMonster(monsterId, &monstro -> image);      // Aloca internamente a imagem do monstro.
+    
+    if(!monstro -> image)
+        printf("NOPE!\n");
+    
+    monstro -> HP = getLife(monsterId);             //Devolve a vida do monstro
+    monstro -> cooldown = getCooldown(monsterId);   //Devolve o Cooldown do monstro
+    getAttack(monsterId, monstro -> ataque); // Manda pada o Void o ataque e função preenche vetor.
+    monstro -> ready = 0;
+    monstro -> currentCooldown = 0;
+    getName(monsterId, monstro -> name);
     
     monstro -> centerX = monstro -> X + (al_get_bitmap_width(monstro -> image) /2);
     monstro -> centerY = monstro -> Y + (al_get_bitmap_height(monstro -> image) /2);
@@ -55,20 +89,24 @@ Monster* initWithMonsterNumber(int fase){
 }
 
 
+
+
 void startMove(Monster* monstro){
     if(monstro -> ready == 1)
         return;
     
-    if (monstro -> fromLeft == 1)
+    if(monstro -> fromLeft == 1)
         monstro -> X = monstro -> X + 20;
-    else
+    else if(monstro -> fromLeft == 0)
         monstro -> X = monstro -> X - 20;
+    else if(monstro -> fromLeft == 2)
+        monstro -> Y = monstro -> Y - 30;
     
     
     monstro -> centerX = monstro -> X + (al_get_bitmap_width(monstro -> image) /2);
     monstro -> centerY = monstro -> Y + (al_get_bitmap_height(monstro -> image) /2);
     
-    if(monstro -> centerX > (al_get_bitmap_width(monstro -> image) /2) && monstro -> centerX < (globalLargura - (al_get_bitmap_height(monstro -> image) /2))){
+    if(monstro -> centerX > (al_get_bitmap_width(monstro -> image) /2) && monstro -> centerX < (globalLargura - (al_get_bitmap_height(monstro -> image) /2)) && monstro -> fromLeft != 2){
         int randomMovementStop = rand() % 100;
         if(monstro -> fromLeft == 1)
             randomMovementStop += monstro -> centerX/4;
@@ -77,12 +115,13 @@ void startMove(Monster* monstro){
             
         if(randomMovementStop > 90 && monstro -> centerX > 0 && monstro -> centerX < globalLargura){
             monstro -> ready = 1;
-        printf("MOVEMENT ENDEEEEEEEEEEEEEED %f %f\n", monstro -> X, monstro -> centerX);
+            printf("MOVEMENT ENDEEEEEEEEEEEEEED %f %f\n", monstro -> X, monstro -> centerX);
         }
 
     }
-    
-    
+    if(monstro -> centerY < globalAltura - 300 && monstro -> fromLeft == 2){
+        monstro -> ready = 1;
+    }
 }
 
 
@@ -224,13 +263,71 @@ void getImageMonster(int number, ALLEGRO_BITMAP** image){        // Isto procura
 
         case Sentry:
             sprintf (temp, "Sentry");
+            width = 87;
+            height = 84;
+            break;
+            
+        case Marlingone:
+            sprintf (temp, "Marlingone");
+            width = 144;
+            height = 144;
+            break;
+        case Hueda:
+            sprintf (temp, "Troll2");
+            width = 410;
+            height = 502;
+            break;
+        case Cirno:
+            sprintf (temp, "Cirno");
+            width = 108;
+            height = 128;
+            break;
+        case Dragon:
+            sprintf (temp, "Dragon");
+            width = 500;
+            height = 522;
+            break;
+        case Balrog:
+            sprintf (temp, "Balrog");
+            width = 306;
+            height = 256;
+            break;
+        case Lavos:
+            sprintf (temp, "Sentry");
             width = 0;
             height = 0;
             break;
+        case Phantom2:
+            sprintf (temp, "DarkPhantom");
+            width = 162;
+            height = 190;
+            break;
+        case Phantom3:
+            sprintf (temp, "DarkPhantom");
+            width = 162;
+            height = 190;
+            break;
+        case Phantom4:
+            sprintf (temp, "DarkPhantom");
+            width = 162;
+            height = 190;
+            break;
+        case Phantom5:
+            sprintf (temp, "DarkPhantom");
+            width = 162;
+            height = 190;
+            break;
+        case Phantom6:
+            sprintf (temp, "DarkPhantom");
+            width = 162;
+            height = 190;
+            break;
+
     }
     
     *image = al_create_bitmap(width, height);
     sprintf (nome, "Graphics/%s.png", temp);
+    printf("%s", nome);
     *image = al_load_bitmap(nome);
 }
 
@@ -275,6 +372,29 @@ int getLife(int number){        //Este método devolve a vida de um monstro, dad
 
         case Sentry:
             return 42;
+            
+        case Marlingone:
+            return 100;
+        case Hueda:
+            return 160;
+        case Cirno:
+            return 120;
+        case Dragon:
+            return 200;
+        case Balrog:
+            return 400;
+        case Lavos:
+            return 1000;
+        case Phantom2:
+            return 94;
+        case Phantom3:
+            return 132;
+        case Phantom4:
+            return 187;
+        case Phantom5:
+            return 246;
+        case Phantom6:
+            return 300;
     }
 
     return 0;
@@ -347,13 +467,57 @@ void getAttack(int fase, int *num){      //Este metodo devolve quais ataques o m
             num[0] = 13;
             num[1] = 9;
             return;
+        case Marlingone:
+            num[0] = 13;
+            num[1] = 11;
+            return;
+        case Hueda:
+            num[0] = 4;
+            num[1] = 5;
+            return;
+        case Cirno:
+            num[0] = 6;
+            num[1] = 11;
+            return;
+        case Dragon:
+            num[0] = 13;
+            num[1] = 10;
+            return;
+        case Balrog:
+            num[0] = 10;
+            num[1] = 13;
+            return;
+        case Lavos:
+            num[0] = 11;
+            num[1] = 13;
+            return;
+        case Phantom2:
+            num[0] = 4;
+            num[1] = 6;
+            return;
+        case Phantom3:
+            num[0] = 9;
+            num[1] = 5;
+            return;
+        case Phantom4:
+            num[0] = 9;
+            num[1] = 9;
+            return;
+        case Phantom5:
+            num[0] = 11;
+            num[1] = 9;
+            return;
+        case Phantom6:
+            num[0] = 9;
+            num[1] = 13;
+            return;
     }
 }
 
 float getCooldown(int num){
     switch(num){
         case Crab:
-            return 8;
+            return 7;
 
         case Fly:
             return 4;
@@ -390,7 +554,77 @@ float getCooldown(int num){
 
         case Sentry:
             return 1;
+            
+        case Marlingone:
+            return 3;
+        case Hueda:
+            return 5;
+        case Cirno:
+            return 1;
+        case Dragon:
+            return 2;
+        case Balrog:
+            return 2;
+        case Lavos:
+            return 3;
+        case Phantom2:
+            return 2;
+        case Phantom3:
+            return 1;
+        case Phantom4:
+            return 1;
+        case Phantom5:
+            return 0;
+        case Phantom6:
+            return -1;
     }
 
     return 0;
 }
+
+void getName(int num, char *temp){
+
+    switch (num){
+        case Marlingone:
+            sprintf (temp, "Old Sorcerer Marlingone");
+            break;
+        case Hueda:
+            sprintf (temp, "Troll Chieftain Hu3Hu3da");
+            break;
+        case Cirno:
+            sprintf (temp, "Ice Fairy Cirno");
+            break;
+        case Dragon:
+            sprintf (temp, "Guardian Dragon");
+            break;
+        case Balrog:
+            sprintf (temp, "Great Demon Balrog");
+            break;
+        case Lavos:
+            sprintf (temp, "Lavos");
+            break;
+        case Phantom2:
+            sprintf (temp, "Dark Phantom xXxAteYourMomxXx");
+            break;
+        case Phantom3:
+            sprintf (temp, "Dark Phantom FrostQueen_GGWP");
+            break;
+        case Phantom4:
+            sprintf (temp, "Dark Phantom LegendaryRankDude");
+            break;
+        case Phantom5:
+            sprintf (temp, "Dark Phantom RussiaDotAPlayer");
+            break;
+        case Phantom6:
+            sprintf (temp, "Dark Phantom Fluttershy");
+            break;
+
+    }
+}
+
+
+
+
+
+
+

@@ -11,21 +11,18 @@ Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     ataque -> deathCountdown = 0;
     printf("bla\n");
 
-    ///
-    // Adicionar sistema para geração de (X,Y) finais.
-    //
-    // if(meele){
-    // PreAnimationTime = -40;
-     ataque -> targetX = rand()%globalLargura;
-     ataque -> targetY = rand()%globalAltura;
-    //  }
-    // else
-    //  do{
-    //
-    //
-    //
-    //  }while(ponto em X,Y MATRIZ GLOBAL == BRANCA);
-    ///
+
+    if(attackId == 1 || attackId == 4 || attackId == 9 || attackId == 10){
+        ataque -> targetX = ataque -> X0;
+        ataque -> targetY = ataque -> Y0;
+        ataque -> angle = 0;
+    }
+    else{
+    ataque -> targetX = rand()%(globalLargura - 80) + 40;
+    ataque -> targetY = rand()%(globalAltura - 190) + 40;
+    ataque -> angle = atan2( (ataque->targetY - ataque->Y0), (ataque->targetX - ataque->X0) );
+    }
+    
 
     ataque -> currentDuration = 0;
     ataque -> image = NULL;
@@ -35,8 +32,7 @@ Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     ataque -> damage = getDamage(attackId);
 
     // Realiza a inclinação
-    ataque -> angle = atan2( (ataque->targetY - ataque->Y0), (ataque->targetX - ataque->X0) );
-
+   
     if(!ataque -> image)
         printf("Imageless atk\n");
     // Desenha no primeiro frame
@@ -48,8 +44,8 @@ Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
 
 
 bool checkAttack(Ataque *attack){
-    if (attack -> preAnimationTime < 0) // Em geral, o tempo antes da ativação do ataque. Pra meele e alguns casos especiais. Ele é um contador externo à animação.
-        attack -> preAnimationTime++;
+    if (attack -> preAnimationTime > 0) // Em geral, o tempo antes da ativação do ataque. Pra meele e alguns casos especiais. Ele é um contador externo à animação.
+        attack -> preAnimationTime--;
     else{
 
         
@@ -60,7 +56,7 @@ bool checkAttack(Ataque *attack){
         attack -> X = attack -> X0 + ( (attack -> targetX - attack -> X0) * (attack -> currentDuration / attack -> duration));
         attack -> Y = attack -> Y0 + ( (attack -> targetY - attack -> Y0) * (attack -> currentDuration / attack -> duration));
             
-        al_draw_rotated_bitmap(attack -> image, 0, 0, attack -> X, attack -> Y, attack -> angle, 0);
+        al_draw_rotated_bitmap(attack -> image, 0, 0, attack -> X - (al_get_bitmap_width(attack -> image) /2), attack -> Y - (al_get_bitmap_height(attack -> image) / 2), attack -> angle, 0);
         
 
             /*al_draw_rotated_bitmap(ALLEGRO_BITMAP *bitmap, float cx, float cy, float dx, float dy, float angle, int flags);*/
@@ -150,7 +146,7 @@ int getDamage(int number){        //Este método devolve o dano de um ataque, da
     
     switch(number){
         case Pincer:
-            return 4;
+            return 2;
 
         case Spit:
             return 7;
@@ -196,43 +192,43 @@ float getDuration(int num){      //Este metodo devolve qual o tempo de animaçã
 
     switch(num){
         case Pincer:
-            return 60;
+            return 16;
 
         case Spit:
-            return 40;
+            return 30;
 
         case Needle:
             return 20;
 
         case Cut:
-            return 2;
+            return 16;
 
         case SpearThrow:
-            return 1;
+            return 20;
 
         case MagicMissiles:
-            return 1;
+            return 20;
 
         case Spores:
-            return 2;
+            return 60;
 
         case NeedleB:
             return 0.3;
 
         case CutB:
-            return 2;
+            return 16;
 
         case Omnicut:
-            return 3;
+            return 16;
 
         case Curse:
-            return 2;
+            return 20;
 
         case Web:
-            return 1.5;
+            return 30;
 
         case Fireball:
-            return 2;
+            return 20;
     }
 
     return 0;

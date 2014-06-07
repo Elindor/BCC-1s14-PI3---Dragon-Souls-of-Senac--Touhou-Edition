@@ -6,6 +6,7 @@ stage *initStageWithNumber(int n){
 	temp -> stageBackground = NULL;
 	temp -> stageAudio = NULL;
 	temp -> bossAudio = NULL;
+    int randomModifier = rand()%100;
 
 	switch(n){
 		case 1:
@@ -44,6 +45,8 @@ stage *initStageWithNumber(int n){
             
             temp -> limitSpawn = 5;
             
+            randomModifier += 15;
+            
 			break;
 
 		case 3:
@@ -63,6 +66,8 @@ stage *initStageWithNumber(int n){
             
             temp -> limitSpawn = 6;
             
+            randomModifier += 20;
+            
 			break;
 
 		case 4:
@@ -81,6 +86,9 @@ stage *initStageWithNumber(int n){
             temp -> targetKills = 100;
             
             temp -> limitSpawn = 6;
+            
+            randomModifier += 70;
+            
 			break;
 
 		case 5:
@@ -99,6 +107,8 @@ stage *initStageWithNumber(int n){
             temp -> targetKills = 100;
             
             temp -> limitSpawn = 6;
+            
+            randomModifier += 40;
             
 			break;
 
@@ -121,8 +131,21 @@ stage *initStageWithNumber(int n){
             
             temp -> limitSpawn = 7;
             
+            randomModifier += 60;
+            
 			break;
 	}
+    
+    
+    if(randomModifier > 100){
+        temp -> darkPhantom = 30 + n;
+        temp -> darkSpawn = rand()% temp -> targetKills + 1;
+    }
+    else{
+        temp -> darkPhantom = 0;
+        temp -> darkSpawn = -1;
+    }
+    
 
 	return temp;
 }

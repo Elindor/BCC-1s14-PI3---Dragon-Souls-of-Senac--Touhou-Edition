@@ -24,6 +24,7 @@
 typedef struct _multiList{
     noAtaque* primeiroAtaque;
     noMonster* primeiroMonstro;
+    Monster *boss;
 }multiList;
 
 void erro(char *mensagem);

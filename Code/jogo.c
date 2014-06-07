@@ -3,6 +3,7 @@
 void spawnMonster(int currentStage, multiList* lista);
 int beginAttack(int *attackNumber, int X0, int Y0, multiList* lista);
 void dismissAttack(multiList *list, noAtaque *noAtk);
+int currentStage;
 
 /*///////////////////////////////////////////////////////////////////////////
 //                Bob.0.0      Glossário - Atalhos
@@ -149,7 +150,6 @@ int main() {
     int cycle = 0;
     int hitx = rand() % (largura);
     int hity = rand() % (altura);
-    int currentStage = 1;
     int mobLimit = 4;
     int mobCount = 0;
     int mobKills = 0;
@@ -158,14 +158,14 @@ int main() {
     int playerHP = 100;
     int barrier = 20;
     int shouldLoad = 1;
-    int bossBattle = 0;
+    currentStage = 1;
 
     int sx, sy;
 
     multiList *omniList = malloc(sizeof(multiList));
     omniList -> primeiroMonstro = NULL;
     omniList -> primeiroAtaque = NULL;
-
+    omniList -> boss = NULL;
     
 
     fila *filaPlayerAtk = aloca();
@@ -221,7 +221,12 @@ int main() {
             
             if(respawnTime >= 300 - (s -> stageNum * 18) && mobCount <= s -> limitSpawn){
                 mobCount++;
-                spawnMonster(s -> stageNum, omniList);
+                if(mobCount == s -> darkSpawn){
+                    Monster* Phantom = initWithBossNumber(s -> darkPhantom);
+                    omniList -> boss = Phantom;
+                }
+                else
+                    spawnMonster(s -> stageNum, omniList);
                 respawnTime = 0;
             }
             
@@ -252,14 +257,29 @@ int main() {
             }
 
             
-            // Bob.4.3 Monster Attack Cycles - move, check strike
+            // Bob.4.3 Boss cycles - Also phantoms
+            
+            if(omniList -> boss != NULL) {
+                startMove(omniList -> boss);
+                omniList -> boss -> currentCooldown++;
+                if(omniList -> boss -> cooldown * 10 < omniList -> boss -> currentCooldown && omniList -> boss -> ready == 1){
+                    printf("Generating new BOOOOOOOSS attack\n");
+                    omniList -> boss -> currentCooldown = -beginAttack(omniList -> boss -> ataque, omniList -> boss -> centerX, omniList -> boss -> centerY, omniList);
+                }
+                al_draw_bitmap(omniList -> boss -> image, omniList -> boss -> X, omniList -> boss -> Y, 0);
+            }
+            
+            
+            
+            // Bob.4.4 Attack Cycles - move, check strike
             
             if(omniList -> primeiroAtaque != NULL){
                 noAtaque *temp = omniList -> primeiroAtaque;
                 
                 do{
-                    if(temp -> attack -> currentDuration < 10){
-                        al_draw_filled_circle(temp -> attack -> targetX, temp -> attack -> targetY, 40, cor);
+                    if(temp -> attack -> currentDuration < 8 && temp -> attack -> preAnimationTime == 0){
+                        int radius = 40 - temp -> attack -> currentDuration * 4;
+                        al_draw_filled_circle(temp -> attack -> targetX, temp -> attack -> targetY, radius, cor);
                     }
                     // Move ataque
                     if(temp -> attack -> duration > temp -> attack -> currentDuration){
@@ -307,6 +327,10 @@ int main() {
             }
             
             
+            
+            
+            
+            
             //Processamento de câmera.
             cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen, &sx, &sy);
 
@@ -336,7 +360,7 @@ int main() {
             /***********************************************************************/
             
             
-            if(bossBattle == 0){
+            if(omniList -> boss == NULL){
                 //al_draw_text(fonte, al_map_rgb(0, 0, 255), largura - 75, 20, ALLEGRO_ALIGN_RIGHT,
                //              "/ %d", s -> limitSpawn)
                 //al_draw_text(fonte, al_map_rgb(0, 0, 255), largura - 60, 20, 0,
@@ -483,28 +507,58 @@ int beginAttack(int *attackNumber, int X0, int Y0, multiList* lista){
     else
         chosenAttack = attackNumber[1];
     
-    Ataque* novoAtaque = initWithAttackNumber(chosenAttack, X0, Y0);
-
+    int totalNumberOfAttacks = 1;
+    int numberOfAttacksMade = 0;
+    int timeInterval = 5;
     
-    noAtaque* a = malloc(sizeof(noAtaque));
-    a -> attack = novoAtaque;
-    a -> prox = NULL;
+    //geradores adicionais por tipo
+    if(chosenAttack == 6 || chosenAttack == 7) // magicMissiles or Spores
+        totalNumberOfAttacks = 3;
+    if(chosenAttack == 11) //Curse
+        totalNumberOfAttacks = 5;
     
-    //procura lugar na lista
-    if(lista -> primeiroAtaque == NULL){
-        lista -> primeiroAtaque = a;
-        return a -> attack -> duration;
+    //geradores adicionais especificos
+    if(currentStage == 1 && chosenAttack == 13)
+        totalNumberOfAttacks = 3;
+    if(currentStage == 3 && chosenAttack == 6){
+        totalNumberOfAttacks = 7;
+        timeInterval = 3;
     }
-    noAtaque* temp;
-    temp = lista -> primeiroAtaque;
-    
-    while(temp -> prox != NULL) {
-        temp = temp -> prox;
+    if(currentStage == 4 && chosenAttack == 13){
+        totalNumberOfAttacks = 2;
+        timeInterval = 0;
     }
-
-    temp -> prox = a;
-    printf("A new attack has successfully spawned\n");
-    return a -> attack -> duration;
+    
+    int returnedInt;
+    do{
+        Ataque* novoAtaque = initWithAttackNumber(chosenAttack, X0, Y0);
+        novoAtaque -> preAnimationTime = timeInterval * numberOfAttacksMade;
+        
+        noAtaque* a = malloc(sizeof(noAtaque));
+        a -> attack = novoAtaque;
+        a -> prox = NULL;
+        
+        //procura lugar na lista
+        if(lista -> primeiroAtaque == NULL)
+            lista -> primeiroAtaque = a;
+        else{
+            noAtaque* temp;
+            temp = lista -> primeiroAtaque;
+            
+            while(temp -> prox != NULL) {
+                temp = temp -> prox;
+            }
+            
+            temp -> prox = a;
+        }
+        
+        printf("A new attack has successfully spawned\n");
+        returnedInt = a -> attack -> duration;
+        numberOfAttacksMade++;
+    }while(numberOfAttacksMade < totalNumberOfAttacks);
+    
+     returnedInt += (numberOfAttacksMade * 3);
+    return returnedInt;
 }
 
 // Bob.9.4 - dismiss attack
