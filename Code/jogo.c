@@ -137,7 +137,37 @@ int main() {
 
     ALLEGRO_BITMAP *gameScreen = al_create_sub_bitmap(buffer, 0, 0, largura, altura);
     
-    ALLEGRO_BITMAP *smoke = al_load_bitmap("Graphics/smoke.png");
+    ALLEGRO_BITMAP *loading1 = al_load_bitmap("Graphics/TitleScreen.png");
+
+    ALLEGRO_BITMAP *victory = al_load_bitmap("Graphics/victory.png");
+    
+    ALLEGRO_BITMAP *loading2 = al_load_bitmap("Graphics/loadingRuinedVillage.png");
+    ALLEGRO_BITMAP *Phantom2_1 = al_load_bitmap("Graphics/darkSpirit2-1.png");
+    ALLEGRO_BITMAP *Phantom2_2 = al_load_bitmap("Graphics/darkSpirit2-2.png");
+    ALLEGRO_BITMAP *Phantom2_3 = al_load_bitmap("Graphics/darkSpirit2-3.png");
+    
+    ALLEGRO_BITMAP *loading3 = al_load_bitmap("Graphics/loadingFrozenLake.png");
+    ALLEGRO_BITMAP *Phantom3_1 = al_load_bitmap("Graphics/darkSpirit3-1.png");
+    ALLEGRO_BITMAP *Phantom3_2 = al_load_bitmap("Graphics/darkSpirit3-2.png");
+    ALLEGRO_BITMAP *Phantom3_3 = al_load_bitmap("Graphics/darkSpirit3-3.png");
+    
+    ALLEGRO_BITMAP *loading4 = al_load_bitmap("Graphics/loadingDrangleicCastle.png");
+    ALLEGRO_BITMAP *Phantom4_1 = al_load_bitmap("Graphics/darkSpirit4-1.png");
+    ALLEGRO_BITMAP *Phantom4_2 = al_load_bitmap("Graphics/darkSpirit4-2.png");
+    ALLEGRO_BITMAP *Phantom4_3 = al_load_bitmap("Graphics/darkSpirit4-3.png");
+    
+    ALLEGRO_BITMAP *loading5 = al_load_bitmap("Graphics/loadingOldDwarven.png");
+    ALLEGRO_BITMAP *Phantom5_1 = al_load_bitmap("Graphics/darkSpirit5-1.png");
+    ALLEGRO_BITMAP *Phantom5_2 = al_load_bitmap("Graphics/darkSpirit5-2.png");
+    ALLEGRO_BITMAP *Phantom5_3 = al_load_bitmap("Graphics/darkSpirit5-3.png");
+    
+    ALLEGRO_BITMAP *loading6 = al_load_bitmap("Graphics/loadingUnderseaPalace.png");
+    ALLEGRO_BITMAP *Phantom6_1 = al_load_bitmap("Graphics/darkSpirit6-1.png");
+    ALLEGRO_BITMAP *Phantom6_2 = al_load_bitmap("Graphics/darkSpirit6-2.png");
+    ALLEGRO_BITMAP *Phantom6_3 = al_load_bitmap("Graphics/darkSpirit6-3.png");
+    
+    ALLEGRO_BITMAP *endingScreen = al_load_bitmap("Graphics/endingScreen.png");
+    
 
     ALLEGRO_BITMAP *shield = al_load_bitmap("Graphics/LeatherShield.png");
 
@@ -160,7 +190,7 @@ int main() {
     int playerHP = 100;
     int barrier = 20;
     int shouldLoad = 1;
-    int bossFight = 0;
+    int bossFight = 1;
     int stageChangeCountdown = 0;
     int stageWillChange = 0;
     float transparency;
@@ -293,8 +323,8 @@ int main() {
             if(bossFight == 1 && omniList -> boss == NULL){
                 bossFight = 0;
                 respawnTime = -300;
-                currentStage++;
                 stageWillChange = 1;
+                currentStage++;
             }
             
             
@@ -436,27 +466,108 @@ int main() {
 
             if(stageWillChange == 1){
                 stageChangeCountdown ++;
-                if(stageChangeCountdown < 100){
-                    transparency = (float)stageChangeCountdown / 100;
+                
+                if(stageChangeCountdown < 75){ // victory warning
+                    if(stageChangeCountdown < 25)
+                        transparency = (float)stageChangeCountdown / 25;
+                    else if(stageChangeCountdown < 50)
+                        transparency = 1;
+                    else if(stageChangeCountdown < 75)
+                        transparency = (float)(75 - stageChangeCountdown) / 25;
+                    else
+                        transparency = 0;
+                    
+                    al_draw_tinted_scaled_bitmap(victory, al_map_rgba_f(1, 1, 1, transparency),
+                                                 0, 0,
+                                                 al_get_bitmap_width(victory),
+                                                 al_get_bitmap_height(victory),
+                                                 0, (altura/2) - (al_get_bitmap_height(victory) /2),
+                                                 largura, al_get_bitmap_height(victory), 0);
+                    
                 }
-                else if(stageChangeCountdown < 400){
-                    transparency = 1;
-                }
-                else{
-                    transparency = (float)(500 - stageChangeCountdown) / 100;
+                else if(stageChangeCountdown >= 100){
+                    if(stageChangeCountdown < 150){     //Stage fog
+                        transparency = (float)(stageChangeCountdown - 100) / 50;
+                    }
+                    else if(stageChangeCountdown <= 250){
+                        transparency = 1;
+                    }
+                    else{
+                        transparency = (float)(300 - stageChangeCountdown) / 50;
+                    }
+                    switch (currentStage) {
+                        case 1:
+                            al_draw_tinted_scaled_bitmap(loading1, al_map_rgba_f(1, 1, 1, transparency),
+                                                         0, 0,
+                                                         al_get_bitmap_width(loading1),
+                                                         al_get_bitmap_height(loading1),
+                                                         0, 0, largura, altura, 0);
+                            break;
+                        case 2:
+                            printf("Unproperly here\n");
+
+                            al_draw_tinted_scaled_bitmap(loading2, al_map_rgba_f(1, 1, 1, transparency),
+                                                         0, 0,
+                                                         al_get_bitmap_width(loading2),
+                                                         al_get_bitmap_height(loading2),
+                                                         0, 0, largura, altura, 0);
+                            break;
+                        case 3:
+                            printf("Properly here\n");
+                            al_draw_tinted_scaled_bitmap(loading3, al_map_rgba_f(1, 1, 1, transparency),
+                                                         0, 0,
+                                                         al_get_bitmap_width(loading3),
+                                                         al_get_bitmap_height(loading3),
+                                                         0, 0, largura, altura, 0);
+                            break;
+                        case 4:
+                            al_draw_tinted_scaled_bitmap(loading4, al_map_rgba_f(1, 1, 1, transparency),
+                                                         0, 0,
+                                                         al_get_bitmap_width(loading4),
+                                                         al_get_bitmap_height(loading4),
+                                                         0, 0, largura, altura, 0);
+                            break;
+                        case 5:
+                            al_draw_tinted_scaled_bitmap(loading5, al_map_rgba_f(1, 1, 1, transparency),
+                                                         0, 0,
+                                                         al_get_bitmap_width(loading5),
+                                                         al_get_bitmap_height(loading5),
+                                                         0, 0, largura, altura, 0);
+                            break;
+                        case 6:
+                            al_draw_tinted_scaled_bitmap(loading6, al_map_rgba_f(1, 1, 1, transparency),
+                                                         0, 0,
+                                                         al_get_bitmap_width(loading6),
+                                                         al_get_bitmap_height(loading6),
+                                                         0, 0, largura, altura, 0);
+                            break;
+                        case 7:
+                            al_draw_tinted_scaled_bitmap(endingScreen, al_map_rgba_f(1, 1, 1, transparency),
+                                                         0, 0,
+                                                         al_get_bitmap_width(endingScreen),
+                                                         al_get_bitmap_height(endingScreen),
+                                                         0, 0, largura, altura, 0);
+                            if(stageChangeCountdown >= 151)
+                                stageChangeCountdown = 151;
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                    
                 }
                 
-                al_draw_tinted_scaled_bitmap(smoke, al_map_rgba_f(1, 1, 1, transparency),
-                                             0, 0,
-                                             al_get_bitmap_width(s -> stageBackground),
-                                             al_get_bitmap_height(s -> stageBackground),
-                                             0, 0, largura, altura, 0);
-                if(stageChangeCountdown == 400)
+                if(stageChangeCountdown == 250){
+                    al_set_audio_stream_playing(s -> stageAudio, false);
+                    al_set_audio_stream_playing(s -> bossAudio, false);
                     shouldLoad = 1;
-                if(stageChangeCountdown == 500){
+                }
+                if(stageChangeCountdown == 300){
                     stageWillChange = 0;
                     stageChangeCountdown = 0;
                 }
+                
+                respawnTime = -300;
             }
 
             
@@ -519,6 +630,27 @@ int main() {
 
     return EXIT_SUCCESS;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /***********************************************************************/
 //   Bob.9.0      Other Functions -- reserved for required here only   //
@@ -644,6 +776,4 @@ void dismissAttack(multiList *list, noAtaque *noAtk){
 
     
 }
-
-
 
