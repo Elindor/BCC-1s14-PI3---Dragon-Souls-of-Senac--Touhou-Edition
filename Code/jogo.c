@@ -83,12 +83,16 @@ int main() {
 
     if(!al_reserve_samples(1))
         erro("erro ao alocar canais de áudio.\n");
+
+    al_init_font_addon();
+
+    if(!al_init_ttf_addon())
+        erro("erro ao inicializar ttf addon.\n");
     
-    //ALLEGRO_FONT *fonte = NULL;
-    //fonte = al_load_font("BRADHITC.TTF", 48, 0);
-    //if(!fonte)
-    //    erro("erro na criacao da fonte\n");
-    
+    ALLEGRO_FONT *fonte = NULL;
+    fonte = al_load_font("Fonts/OptimusPrinceps.ttf", 48, 0);
+    if(!fonte)
+        erro("erro na criacao da fonte\n");
 
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / FPS);
     if(!timer)
@@ -117,6 +121,10 @@ int main() {
 
     // Matrizes-camera
     unsigned char ***matriz = camera_aloca_matriz(cam);
+
+    //Teste ttf
+    //al_draw_text(fonte, al_map_rgb(255, 0, 0), largura/2, altura/2, 0, "YOU DIED");
+    //al_flip_display();
 
     int ***background = alocaHsvMatriz(largura, altura);
     getBackground(cam, background);
@@ -242,9 +250,6 @@ int main() {
 
         if(desenhar && al_is_event_queue_empty(queue)){
             desenhar = 0;
-
-
-            
             
             //Draw backgound
             al_draw_scaled_bitmap(s -> stageBackground, 0, 0,

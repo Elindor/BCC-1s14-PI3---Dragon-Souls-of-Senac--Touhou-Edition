@@ -703,7 +703,6 @@ void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
                 pixelD++;
 
                 if(rd == 255 && gd == 0 && bd == 0){
-                    printf("vermelho!\n");
                     if(m -> isHit == 0){
                         printf("acertou minion!\n");
 
