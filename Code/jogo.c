@@ -243,11 +243,17 @@ int main() {
         if(desenhar && al_is_event_queue_empty(queue)){
             desenhar = 0;
 
+
+            
+            
             //Draw backgound
             al_draw_scaled_bitmap(s -> stageBackground, 0, 0,
                                 al_get_bitmap_width(s -> stageBackground),
                                 al_get_bitmap_height(s -> stageBackground),
                                 0, 0, largura, altura, 0);
+            
+            //Processamento de câmera.
+            cameraLoop(matriz, cam, filaPlayerAtk, background, buffer, &sx, &sy);
 
 
             /***********************************************************************/
@@ -348,9 +354,14 @@ int main() {
                     else{
                         if(temp -> attack -> deathCountdown == 0){
                             
-                            //Damage things
+                            double value = ( pow(temp -> attack -> targetX - sx, 2) + pow(temp -> attack -> targetY - sy, 2) );
+                            int dist = sqrt(value) - 7;
                             
-                            if(barrier >= 1){    //Se houver barreira, tem todo esse paranauê
+                            if(dist < al_get_bitmap_width(shield) && dist > -al_get_bitmap_width(shield)){
+                                printf("Blocked!!\n");
+
+                            }
+                            else if(barrier >= 1){    //Se houver barreira, tem todo esse paranauê
                                 barrier -=temp -> attack -> damage;
                                 if(barrier < 0){
                                     playerHP += barrier;
@@ -389,10 +400,16 @@ int main() {
             
             
             
-            //Processamento de câmera.
-            cameraLoop(matriz, cam, filaPlayerAtk, background, buffer, &sx, &sy);
+
             
             
+            
+            
+            
+            
+            /***********************************************************************/
+            //       Bob.6.0            Interface Cycles, bitches                  //
+            /***********************************************************************/
             
             
             if(sx > 0 && sy > 0)
@@ -400,9 +417,6 @@ int main() {
                 al_draw_tinted_bitmap(shield, al_map_rgba_f(1, 1, 1, 0.6), sx - al_get_bitmap_width(shield) / 2, sy - al_get_bitmap_height(shield) / 2, 0);
 
             
-            /***********************************************************************/
-            //       Bob.6.0            Interface Cycles, bitches                  //
-            /***********************************************************************/
             
             
             if(omniList -> boss == NULL){
@@ -504,8 +518,6 @@ int main() {
                                                          0, 0, largura, altura, 0);
                             break;
                         case 2:
-                            printf("Unproperly here\n");
-
                             al_draw_tinted_scaled_bitmap(loading2, al_map_rgba_f(1, 1, 1, transparency),
                                                          0, 0,
                                                          al_get_bitmap_width(loading2),
