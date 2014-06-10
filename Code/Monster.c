@@ -704,11 +704,14 @@ void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
 
                 if(rd == 255 && gd == 0 && bd == 0){
                     if(m -> isHit == 0){
-                        printf("acertou minion!\n");
+                        printf("acertou hp atual:%d!\n", m -> HP);
 
                         m -> isHit = 1;
                         m -> HP -= playerAtk;                   // Monstro perde vida igual ao ataque;
                         playerHP += playerAtk * 0.13;           // O valor 13% de lifesteal foi gerado por um rand com seed (Leon)
+
+                        if(playerHP > 100)
+                            playerHP = 100;
                     }
 
                     al_unlock_bitmap(display);

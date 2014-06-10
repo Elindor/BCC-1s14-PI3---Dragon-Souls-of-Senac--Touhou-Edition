@@ -176,7 +176,7 @@ void drawAtk(fila *f){
       int alpha = 0;
 
       while(e1 != NULL && e2 != NULL){
-          al_draw_line(e1->x, e1->y, e2->x, e2->y, al_map_rgba(255, 0, 0, alpha), 3);
+          al_draw_line(e1->x, e1->y, e2->x, e2->y, al_map_rgb(255, 0, 0), 3);
 
           e1 = e2;
           e2 = e2->prox;

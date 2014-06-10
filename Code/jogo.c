@@ -205,7 +205,7 @@ int main() {
     int stageChangeCountdown = 0;
     int stageWillChange = 0;
     float transparency;
-    currentStage = 3;
+    currentStage = 1;
     playerHP = 100;
     playerAtk = 4;
     
@@ -261,9 +261,6 @@ int main() {
                                 al_get_bitmap_width(s -> stageBackground),
                                 al_get_bitmap_height(s -> stageBackground),
                                 0, 0, largura, altura, 0);
-            
-            //Processamento de câmera.
-            cameraLoop(matriz, cam, filaPlayerAtk, background, buffer, &sx, &sy);
 
 
             /***********************************************************************/
@@ -301,8 +298,6 @@ int main() {
                     }
             
                     al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
-
-                    monsterGotHit(buffer, temp -> monster);
 
                     if(temp -> prox != NULL)
                         temp = temp -> prox;
@@ -346,7 +341,9 @@ int main() {
                 currentStage++;
             }
             
-            
+            //Processamento de câmera.
+            cameraLoop(matriz, cam, filaPlayerAtk, background, buffer, &sx, &sy);
+
             
             // Bob.4.4 Attack Cycles - move, check strike
             
@@ -585,6 +582,18 @@ int main() {
             
             al_flip_display();
 
+            //check minion hitbox
+            if(omniList -> primeiroMonstro != NULL){
+                noMonster *temp = omniList -> primeiroMonstro;
+
+                do{
+                    monsterGotHit(buffer, temp -> monster);
+
+                    if(temp -> prox != NULL)
+                        temp = temp -> prox;
+
+                }while(temp -> prox != NULL);
+            }
 
             //Dead player is dead.
             if(playerHP <= 0){
@@ -836,7 +845,8 @@ void deathScreen(){
         erro("erro ao alocar deathSample.\n");
 
     al_play_sample(deathSample, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
-    al_rest(5);
+
+
 
     //Mostrar tela de morte.
 
