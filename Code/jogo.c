@@ -5,6 +5,8 @@ int beginAttack(int *attackNumber, int X0, int Y0, multiList* lista);
 void dismissAttack(multiList *list, noAtaque *noAtk);
 int currentStage;
 
+void deathScreen();
+
 /*///////////////////////////////////////////////////////////////////////////
 //                Bob.0.0      Glossário - Atalhos
 **************************************************************************
@@ -198,11 +200,11 @@ int main() {
     int playerHP = 100;
     int barrier = 20;
     int shouldLoad = 1;
-    int bossFight = 1;
+    int bossFight = 0;
     int stageChangeCountdown = 0;
     int stageWillChange = 0;
     float transparency;
-    currentStage = 1;
+    currentStage = 3;
 
     int sx, sy;
 
@@ -293,10 +295,11 @@ int main() {
                     if(temp -> monster -> cooldown * 10 < temp -> monster -> currentCooldown && temp -> monster -> ready == 1){
                         printf("Generating new attack\n");
                         temp -> monster -> currentCooldown = -beginAttack(temp -> monster -> ataque, temp -> monster -> centerX, temp -> monster -> centerY, omniList);
-                       
                     }
             
                     al_draw_bitmap(temp->monster->image, temp->monster->X, temp->monster->Y, 0);
+
+                    monsterGotHit(buffer, temp -> monster);
 
                     if(temp -> prox != NULL)
                         temp = temp -> prox;
@@ -307,7 +310,7 @@ int main() {
             
             // Bob.4.3 Boss cycles - Also phantoms
             
-            if(omniList -> boss == NULL && omniList -> primeiroMonstro == NULL && mobCount == s -> limitSpawn){
+            if(omniList -> boss == NULL && omniList -> primeiroMonstro == NULL && mobKills == s -> targetKills){
                 //Spawns boss
                 if(respawnTime < 10300){        //Desliga musica, seta 300 ciclos de espera
                     respawnTime = 10000;
@@ -400,18 +403,6 @@ int main() {
                 }while(temp -> prox != NULL);
             }
             
-            
-            
-            
-            
-            
-
-            
-            
-            
-            
-            
-            
             /***********************************************************************/
             //       Bob.6.0            Interface Cycles, bitches                  //
             /***********************************************************************/
@@ -425,10 +416,10 @@ int main() {
             
             
             if(omniList -> boss == NULL){
-                //al_draw_text(fonte, al_map_rgb(0, 0, 255), largura - 75, 20, ALLEGRO_ALIGN_RIGHT,
-               //              "/ %d", s -> limitSpawn)
-                //al_draw_text(fonte, al_map_rgb(0, 0, 255), largura - 60, 20, 0,
-               //              "/ %d", s -> limitSpawn)
+                al_draw_textf(fonte, al_map_rgb(0, 0, 255), largura - 75, 20, ALLEGRO_ALIGN_RIGHT,
+                            "%d", mobKills);
+                al_draw_textf(fonte, al_map_rgb(0, 0, 255), largura - 65, 20, 0,
+                             "/%d", s -> targetKills);
             }
             else{
                 al_draw_filled_rectangle(41, 79, (1 * (largura - 82) + 41),  51, cor);
@@ -466,7 +457,6 @@ int main() {
                                       0);
             }
             */
-            
             
             // Hp drawing
             if(playerHP >= 1)
@@ -591,17 +581,13 @@ int main() {
             al_flip_display();
 
 
-            //check minion hitbox
-            if(omniList -> primeiroMonstro != NULL){
-                noMonster *temp = omniList -> primeiroMonstro;
-
-                do{
-                    monsterGotHit(buffer, temp -> monster);
-
-                    if(temp -> prox != NULL)
-                        temp = temp -> prox;
-
-                }while(temp -> prox != NULL);
+            //Dead player is dead.
+            if(playerHP <= 0){
+                al_set_audio_stream_playing(s -> stageAudio, false);
+                al_set_audio_stream_playing(s -> bossAudio, false);
+                
+                deathScreen();
+                break;
             }
         }
         
@@ -620,6 +606,8 @@ int main() {
     al_destroy_bitmap(gameScreen);
     al_destroy_bitmap(HPBarBox);
     al_destroy_bitmap(shield);
+
+    al_destroy_font(fonte);
 
     libera(filaPlayerAtk);
 
@@ -790,7 +778,17 @@ void dismissAttack(multiList *list, noAtaque *noAtk){
     al_destroy_bitmap(noAtk -> attack -> image);
     free(noAtk -> attack);
     free(noAtk);
-
-    
 }
 
+void deathScreen(){
+    ALLEGRO_SAMPLE *deathSample = al_load_sample("SFX/Death.ogg");
+    if(!deathSample)
+        erro("erro ao alocar deathSample.\n");
+
+    al_play_sample(deathSample, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+    al_rest(5);
+
+    //Mostrar tela de morte.
+
+    al_destroy_sample(deathSample);
+}
