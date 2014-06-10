@@ -205,7 +205,7 @@ int main() {
     int stageChangeCountdown = 0;
     int stageWillChange = 0;
     float transparency;
-    currentStage = 1;
+    currentStage = 3;
     playerHP = 100;
     playerAtk = 4;
     
@@ -844,11 +844,19 @@ void deathScreen(){
     if(!deathSample)
         erro("erro ao alocar deathSample.\n");
 
+    ALLEGRO_BITMAP *deathScreen = al_load_bitmap("Graphics/DeathScreen.png");
+    if(!deathScreen)
+        erro("erro ao alocar deathScreen.\n");
+
     al_play_sample(deathSample, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 
+    int alpha;
 
-
-    //Mostrar tela de morte.
+    for(alpha = 0; alpha < 255; alpha += 2){
+        al_draw_tinted_bitmap(deathScreen, al_map_rgba(alpha, alpha, alpha, alpha), 0, 0, 0);
+        al_flip_display();
+        al_rest(0.015);
+    }
 
     al_destroy_sample(deathSample);
 }
