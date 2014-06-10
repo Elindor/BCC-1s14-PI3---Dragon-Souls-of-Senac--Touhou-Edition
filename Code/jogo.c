@@ -3,7 +3,9 @@
 void spawnMonster(int currentStage, multiList* lista);
 int beginAttack(int *attackNumber, int X0, int Y0, multiList* lista);
 void dismissAttack(multiList *list, noAtaque *noAtk);
+void dismissMonsters(multiList *list);
 int currentStage;
+int mobKills;
 
 void deathScreen();
 
@@ -194,10 +196,9 @@ int main() {
     int hity = rand() % (altura);
     int mobLimit = 4;
     int mobCount = 0;
-    int mobKills = 0;
+    mobKills = 0;
     int mobTarget = 20;
     int respawnTime = -200;
-    int playerHP = 100;
     int barrier = 20;
     int shouldLoad = 1;
     int bossFight = 0;
@@ -205,7 +206,9 @@ int main() {
     int stageWillChange = 0;
     float transparency;
     currentStage = 3;
-
+    playerHP = 100;
+    playerAtk = 4;
+    
     int sx, sy;
 
     multiList *omniList = malloc(sizeof(multiList));
@@ -227,7 +230,7 @@ int main() {
             al_attach_audio_stream_to_mixer(s -> stageAudio, al_get_default_mixer());
             al_set_audio_stream_playing(s -> bossAudio, false);
             al_set_audio_stream_playing(s -> stageAudio, true);
-
+            mobKills = 0;
             shouldLoad = 0;
         }
             
@@ -306,7 +309,9 @@ int main() {
 
                 }while(temp -> prox != NULL);
             }
-
+            
+            // monster deaths!
+            dismissMonsters(omniList);
             
             // Bob.4.3 Boss cycles - Also phantoms
             
@@ -688,6 +693,49 @@ void spawnMonster(int currentStage, multiList* lista){
     printf("A new Monster has successfully spawned\n");
 }
 
+// Bob.9.2 Dismiss dead monsters
+
+void dismissMonsters(multiList *list){
+    noMonster *verifiedMonster = list -> primeiroMonstro;
+    noMonster * temp = NULL;
+    
+    if(!verifiedMonster)
+        return;
+    
+    while(verifiedMonster -> monster -> HP <= 0 && verifiedMonster == list -> primeiroMonstro){      //Este é o primeiro monstro
+        list -> primeiroMonstro = verifiedMonster -> prox;
+        temp = verifiedMonster;
+        verifiedMonster = verifiedMonster -> prox;
+        al_destroy_bitmap(temp -> monster -> image);
+        free(temp -> monster);
+        free(temp);
+        mobKills++;
+    }
+    
+    
+    while(verifiedMonster -> prox != NULL){
+        if(verifiedMonster -> prox -> monster -> HP <= 0){
+            temp = verifiedMonster -> prox;
+            verifiedMonster -> prox  = verifiedMonster -> prox -> prox;
+            al_destroy_bitmap(temp -> monster -> image);
+            free(temp -> monster);
+            free(temp);
+            mobKills++;
+        }
+        
+        verifiedMonster = verifiedMonster -> prox;
+        
+    }
+    if(verifiedMonster -> monster -> HP <= 0){
+        al_destroy_bitmap(verifiedMonster -> monster -> image);
+        free(verifiedMonster -> monster);
+        free(verifiedMonster);
+        mobKills++;
+    }
+    
+
+}
+
 
 // Bob.9.3 - spawn attack
 
@@ -780,6 +828,8 @@ void dismissAttack(multiList *list, noAtaque *noAtk){
     free(noAtk);
 }
 
+
+// Bob.9.5 - Death screen
 void deathScreen(){
     ALLEGRO_SAMPLE *deathSample = al_load_sample("SFX/Death.ogg");
     if(!deathSample)

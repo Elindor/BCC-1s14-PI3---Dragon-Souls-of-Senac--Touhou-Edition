@@ -3,5 +3,7 @@
 
 int globalAltura;
 int globalLargura;
+int playerAtk;
+float playerHP;
 
 #endif
