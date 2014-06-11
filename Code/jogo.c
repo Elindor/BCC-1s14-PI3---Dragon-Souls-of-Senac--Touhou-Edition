@@ -218,7 +218,7 @@ int main() {
     int stageChangeCountdown = 0;
     int stageWillChange = 0;
     float transparency;
-    currentStage = 3;
+    currentStage = 2;
     playerHP = 100;
     playerAtk = 4;
     
@@ -915,10 +915,10 @@ void deathScreen(){
 
     int alpha;
 
-    for(alpha = 0; alpha < 255; alpha += 2){
-        al_draw_tinted_bitmap(deathScreen, al_map_rgba(alpha, alpha, alpha, alpha), 0, 0, 0);
+    for(alpha = 0; alpha < 100; alpha += 2){
+        al_draw_tinted_bitmap(deathScreen, al_map_rgba(50, 50, 50, alpha/3), 0, 0, 0);
         al_flip_display();
-        al_rest(0.015);
+        al_rest(0.05);
     }
 
     al_destroy_sample(deathSample);

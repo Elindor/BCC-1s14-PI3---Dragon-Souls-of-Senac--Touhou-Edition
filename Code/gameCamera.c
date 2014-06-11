@@ -6,6 +6,13 @@ void getBackground(camera *cam, int ***background){
 
   int tempH, tempS, tempV;
 
+  ALLEGRO_BITMAP *titleScreen = al_load_bitmap("Graphics/TitleScreen.png");
+  if(!titleScreen)
+    erro("erro ao alocar titleScreen.\n");
+
+  al_draw_bitmap(titleScreen, 0, 0, 0);
+  al_flip_display();
+
   al_rest(1);
 
   for(y = 0; y < cam->altura; y++)
@@ -76,7 +83,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
             //Espada
             rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], &h, &s, &v);
 
-            if((h < 15 || h > 345) && s > 75 && v > 75){
+            if((h < 30 || h > 330) && s > 75 && v > 75){
                 cyr += y;
                 cxr += x;
                 cnr++;
@@ -116,7 +123,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
             }
 
             //Escudo
-            if(h < 165 && h > 135 && s > 50 && v > 75){
+            if(h < 160 && h > 120 && s > 50 && v > 85){
               by += y;
               bx += x;
               bn++;
@@ -163,6 +170,8 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
         retira(f);
 
     drawAtk(f);
+
+    al_destroy_bitmap(silhueta);
 }
 
 void drawAtk(fila *f){

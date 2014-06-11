@@ -12,6 +12,7 @@
 
 #include "fila.h"
 #include "hsvMatriz.h"
+#include "jogo.h"
 
 void drawAtk(fila *f);
 void rgbToHsv(int r, int g, int b, int *h, int *s, int *v);
