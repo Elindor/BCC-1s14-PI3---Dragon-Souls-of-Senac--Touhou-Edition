@@ -645,7 +645,7 @@ void getName(int num, char *temp){
             break;
 
         case Phantom3:
-            sprintf (temp, "Dark Phantom FrostQueen_GGWP");
+            sprintf (temp, "Dark Phantom FrostQueen _ GGWP");
             break;
 
         case Phantom4:

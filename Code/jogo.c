@@ -97,6 +97,11 @@ int main() {
     fonte = al_load_font("Fonts/OptimusPrinceps.ttf", 48, 0);
     if(!fonte)
         erro("erro na criacao da fonte\n");
+    
+    ALLEGRO_FONT *fonteSmall = NULL;
+    fonteSmall = al_load_font("Fonts/OptimusPrinceps.ttf", 22, 0);
+    if(!fonteSmall)
+        erro("erro na criacao da fonteSmall\n");
 
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / FPS);
     if(!timer)
@@ -138,6 +143,7 @@ int main() {
     // Allegro Items
     ALLEGRO_COLOR cor = al_map_rgb_f(1, 0, 0);
     ALLEGRO_COLOR cinza = al_map_rgb_f(0.6, 0.6, 0.6);
+    ALLEGRO_COLOR branco = al_map_rgb_f(1, 1, 1);
 
     
     ALLEGRO_COLOR cor2 = al_map_rgb_f(0, 0, 1);
@@ -178,6 +184,11 @@ int main() {
     ALLEGRO_BITMAP *Phantom6_2 = al_load_bitmap("Graphics/darkSpirit6-2.png");
     ALLEGRO_BITMAP *Phantom6_3 = al_load_bitmap("Graphics/darkSpirit6-3.png");
     
+    
+    ALLEGRO_SAMPLE *invasionSample = al_load_sample("SFX/Invasion.ogg");
+    ALLEGRO_SAMPLE *victorySample = al_load_sample("SFX/Victory.ogg");
+    ALLEGRO_SAMPLE *blockSample = al_load_sample("SFX/Shield.ogg");
+
     ALLEGRO_BITMAP *endingScreen = al_load_bitmap("Graphics/endingScreen.png");
     
 
@@ -202,6 +213,8 @@ int main() {
     int barrier = 20;
     int shouldLoad = 1;
     int bossFight = 0;
+    int invasionFight = 0;
+    int invasionTimer = 0;
     int stageChangeCountdown = 0;
     int stageWillChange = 0;
     float transparency;
@@ -274,6 +287,8 @@ int main() {
                 if(mobCount == s -> darkSpawn){
                     Monster* Phantom = initWithBossNumber(s -> darkPhantom);
                     omniList -> boss = Phantom;
+                    invasionFight = 1;
+                    al_play_sample(invasionSample, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
                 }
                 else
                     spawnMonster(s -> stageNum, omniList);
@@ -411,16 +426,15 @@ int main() {
             
             
             if(sx > 0 && sy > 0)
-                //al_draw_bitmap(shield, sx - al_get_bitmap_width(shield) / 2, sy - al_get_bitmap_height(shield) / 2, 0);
                 al_draw_tinted_bitmap(shield, al_map_rgba_f(1, 1, 1, 0.6), sx - al_get_bitmap_width(shield) / 2, sy - al_get_bitmap_height(shield) / 2, 0);
 
             
             
             
             if(omniList -> boss == NULL){
-                al_draw_textf(fonte, al_map_rgb(0, 0, 255), largura - 75, 20, ALLEGRO_ALIGN_RIGHT,
+                al_draw_textf(fonte, branco, largura - 75, 20, ALLEGRO_ALIGN_RIGHT,
                             "%d", mobKills);
-                al_draw_textf(fonte, al_map_rgb(0, 0, 255), largura - 65, 20, 0,
+                al_draw_textf(fonte, branco, largura - 65, 20, 0,
                              "/%d", s -> targetKills);
             }
             else{
@@ -433,6 +447,8 @@ int main() {
                                       40, 50,
                                       largura - 80, 30,
                                       0);
+                al_draw_textf(fonteSmall, branco, largura - 40, 85, ALLEGRO_ALIGN_RIGHT,
+                              "%s", omniList -> boss -> name);
             }
             
             
@@ -442,23 +458,70 @@ int main() {
             float tempHP = (float) playerHP / 100;
             float tempbarrier = (float) barrier / 100;
             
-            //Barrier bar drawing
+            // Phantom Stuff
             
-            /*
-             
-             //CASO COM OUTRA BARRA
-            if(barrier >= 1){
-                al_draw_filled_rectangle(41, altura - 129, (tempbarrier * (largura - 41)), altura - 101, cinza);
+            if(invasionFight == 1 && invasionTimer <= 110){
+                transparency = 0;
+                if(invasionTimer < 25)
+                    transparency = invasionTimer * 0.04;
+                else if(invasionTimer < 50)
+                    transparency = (50 - invasionTimer) * 0.04;
+                else if(invasionTimer >= 60 && invasionTimer < 85)
+                    transparency = (invasionTimer - 60) * 0.04;
+                else if(invasionTimer >= 85)
+                    transparency = (110 - invasionTimer) * 0.04;
                 
-                al_draw_scaled_bitmap(HPBarBox,
-                                      0, 0,
-                                      al_get_bitmap_width(HPBarBox),
-                                      al_get_bitmap_height(HPBarBox),
-                                      40, altura - 130,
-                                      largura - 80, 30,
-                                      0);
+                switch (currentStage) {
+                    case 2:
+                        al_draw_tinted_scaled_bitmap(Phantom2_1, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom2_1),
+                                                     al_get_bitmap_height(Phantom2_1),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom2_1), 0);
+                        break;
+                    case 3:
+                        al_draw_tinted_scaled_bitmap(Phantom3_1, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom3_1),
+                                                     al_get_bitmap_height(Phantom3_1),
+                                                     0, altura - 200,
+                                                    largura, al_get_bitmap_height(Phantom3_1), 0);
+                        break;
+                    case 4:
+                        al_draw_tinted_scaled_bitmap(Phantom4_1, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom4_1),
+                                                     al_get_bitmap_height(Phantom4_1),
+                                                     0, altura - 200,
+                                                    largura, al_get_bitmap_height(Phantom4_1), 0);
+                        break;
+                    case 5:
+                        al_draw_tinted_scaled_bitmap(Phantom5_1, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom5_1),
+                                                     al_get_bitmap_height(Phantom5_1),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom5_1), 0);
+                        break;
+                        
+                    default:
+                        al_draw_tinted_scaled_bitmap(Phantom6_1, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom6_1),
+                                                     al_get_bitmap_height(Phantom6_1),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom6_1), 0);
+                        break;
+                }
+                invasionTimer += 2;
             }
-            */
+            
+            
+             
+             
+            
+            
             
             // Hp drawing
             if(playerHP >= 1)

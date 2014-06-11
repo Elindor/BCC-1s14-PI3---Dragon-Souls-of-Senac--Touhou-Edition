@@ -111,7 +111,7 @@ void getImageAttack(int number, ALLEGRO_BITMAP **image){        // Isto procura 
         width = height = 50;
         break;
     case NeedleB:
-        sprintf (temp, "Needle");
+        sprintf (temp, "Needle2");
         width = 60;
         height = 35;
         break;
