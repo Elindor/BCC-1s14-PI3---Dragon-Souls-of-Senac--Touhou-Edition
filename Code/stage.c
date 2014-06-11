@@ -145,8 +145,8 @@ stage *initStageWithNumber(int n){
         temp -> darkPhantom = 0;
         temp -> darkSpawn = -1;
     }
-    temp -> darkPhantom = 30 + n;
-    temp -> darkSpawn = 1;
+    //temp -> darkPhantom = 30 + n;
+    //temp -> darkSpawn = 1;
 
 	return temp;
 }

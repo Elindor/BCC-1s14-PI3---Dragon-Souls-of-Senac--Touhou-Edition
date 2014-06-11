@@ -13,19 +13,6 @@ void getBackground(camera *cam, int ***background){
   al_draw_bitmap(titleScreen, 0, 0, 0);
   al_flip_display();
 
-  al_rest(1);
-
-  for(y = 0; y < cam->altura; y++)
-      for(x = 0; x < cam->largura; x++){
-          rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], 
-          &background[y][x][0], &background[y][x][1], &background[y][x][2]);
-
-        if(background[y][x][0] > 180){
-            background[y][x][0] -= 360;
-            background[y][x][0] = -background[y][x][0];
-        }
-      }
-
     for(;i < 10; i++){
       al_rest(0.5);
 
@@ -40,27 +27,31 @@ void getBackground(camera *cam, int ***background){
             }
   
             background[y][x][0] += tempH;
-            background[y][x][0] /=2;
   
             background[y][x][1] += tempS;
-            background[y][x][1] /=2;
           
             background[y][x][2] += tempV;
-            background[y][x][2] /=2;
-          }
-      }
+        }
+    }
+
+    for(y = 0; y < cam->altura; y++)
+    	for(x = 0; x < cam->largura; x++){
+    		background[y][x][0] /= 10;
+    		background[y][x][1] /= 10;
+    		background[y][x][2] /= 10;
+    	}
 }
 
 void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background, ALLEGRO_BITMAP *gameScreen, int *sx, int *sy){
-  camera_atualiza(cam);
-
-  int x, y;
-
-  int bx = 0;
-  int by = 0;
-  int bn = 0;
-
-  int cyr = 0;
+    camera_atualiza(cam);
+    
+    int x, y;
+    
+    int bx = 0;
+    int by = 0;
+    int bn = 0;
+    
+    int cyr = 0;
     int cxr = 0;
     int cnr = 0;
 
@@ -102,7 +93,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
 
             ds = s - background[y][x][1];
             if(ds < 0)
-              s = -ds;
+              ds = -ds;
 
             dv = v - background[y][x][2];
             if(dv < 0)
@@ -127,10 +118,6 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
               by += y;
               bx += x;
               bn++;
-
-              matriz[y][x][0] = 0;
-              matriz[y][x][1] = 255;
-              matriz[y][x][2] = 0;
             }
         }
     }
@@ -144,7 +131,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
     al_draw_tinted_bitmap(silhueta, al_map_rgba(75, 75, 175, 25), 0, 0, 0);
     /**********/
 
-    if(bn > 125){
+    if(bn > 50){
         *sx = bx / bn;
         *sy = by / bn;
     }

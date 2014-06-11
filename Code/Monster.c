@@ -682,14 +682,15 @@ void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
 
     for(int y = 0; y < hm; y++){
         unsigned char *pixelM = rowM;
-        unsigned char *pixelD = rowD + (4 * (int)m -> X);
+        unsigned char *pixelD = rowD;
+        pixelD += (4 * (int)m -> X);
 
         for(int x = 0; x < wm; x++){
             pixelM += 3;
             am = *pixelM;
             pixelM++;
 
-            if(am > 0 && y + m -> Y >= 0 && y + m -> Y < hd && x + m -> X >= 0 && x + m -> X < wd){
+            if(am > 0 && y + m -> Y >= 0 && y + m -> Y < hd && x + m -> X >= 0 && x + m -> X < wd){                
                 bd = *pixelD;
                 pixelD++;
 
@@ -704,11 +705,11 @@ void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
 
                 if(rd == 255 && gd == 0 && bd == 0){
                     if(m -> isHit == 0){
-                        printf("acertou hp atual:%d!\n", m -> HP);
-
                         m -> isHit = 1;
                         m -> HP -= playerAtk;                   // Monstro perde vida igual ao ataque;
                         playerHP += playerAtk * 0.13;           // O valor 13% de lifesteal foi gerado por um rand com seed (Leon)
+
+                        printf("acertou hp atual:%d!\n", m -> HP);
 
                         if(playerHP > 100)
                             playerHP = 100;
@@ -732,6 +733,12 @@ void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
     al_unlock_bitmap(display);
     al_unlock_bitmap(m -> image);
 
-    if(m -> isHit == 1)
+    if(m -> isHit == 1){
+        printf("Espada saiu do minion\n");
         m -> isHit = 0;
+    }
+    
+    else{
+        printf("miss\n");
+    }
 }

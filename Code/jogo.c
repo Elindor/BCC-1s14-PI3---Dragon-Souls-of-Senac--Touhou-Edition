@@ -211,6 +211,7 @@ int main() {
     int mobTarget = 20;
     int respawnTime = -200;
     int barrier = 20;
+    int playerDef = 0;
     int shouldLoad = 1;
     int bossFight = 0;
     int invasionFight = 0;
@@ -218,7 +219,7 @@ int main() {
     int stageChangeCountdown = 0;
     int stageWillChange = 0;
     float transparency;
-    currentStage = 2;
+    currentStage = 1;
     playerHP = 100;
     playerAtk = 4;
     
@@ -325,9 +326,20 @@ int main() {
             
             // Bob.4.3 Boss cycles - Also phantoms
             
+            if(omniList -> boss != NULL){
+                if(omniList -> boss -> HP <= 0){
+                    free(omniList -> boss -> image);
+                    free(omniList -> boss);
+                    if(invasionFight == 1){ //Se era uma luta contra Phantom
+                        invasionFight = 2;
+                        mobKills++;
+                    }
+                }
+            }
+            
             if(omniList -> boss == NULL && omniList -> primeiroMonstro == NULL && mobKills == s -> targetKills){
                 //Spawns boss
-                if(respawnTime < 10300){        //Desliga musica, seta 300 ciclos de espera
+                if(respawnTime < 10200){        //Desliga musica, seta 300 ciclos de espera
                     respawnTime = 10000;
                     al_set_audio_stream_playing(s -> stageAudio, false);
                 }
@@ -516,13 +528,146 @@ int main() {
                 }
                 invasionTimer += 2;
             }
+            if(invasionFight == 2 && invasionTimer <= 110){
+                transparency = 0;
+                if(invasionTimer < 25)
+                    transparency = invasionTimer * 0.04;
+                else if(invasionTimer < 50)
+                    transparency = (50 - invasionTimer) * 0.04;
+                else if(invasionTimer >= 60 && invasionTimer < 85)
+                    transparency = (invasionTimer - 60) * 0.04;
+                else if(invasionTimer >= 85)
+                    transparency = (110 - invasionTimer) * 0.04;
+                
+                switch (currentStage) {
+                    case 2:
+                        al_draw_tinted_scaled_bitmap(Phantom2_2, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom2_2),
+                                                     al_get_bitmap_height(Phantom2_2),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom2_2), 0);
+                        break;
+                    case 3:
+                        al_draw_tinted_scaled_bitmap(Phantom3_2, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom3_2),
+                                                     al_get_bitmap_height(Phantom3_2),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom3_2), 0);
+                        break;
+                    case 4:
+                        al_draw_tinted_scaled_bitmap(Phantom4_2, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom4_2),
+                                                     al_get_bitmap_height(Phantom4_2),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom4_2), 0);
+                        break;
+                    case 5:
+                        al_draw_tinted_scaled_bitmap(Phantom5_2, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom5_2),
+                                                     al_get_bitmap_height(Phantom5_2),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom5_2), 0);
+                        break;
+                        
+                    default:
+                        al_draw_tinted_scaled_bitmap(Phantom6_2, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom6_2),
+                                                     al_get_bitmap_height(Phantom6_2),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom6_2), 0);
+                        break;
+                }
+                invasionTimer += 2;
+                if(invasionTimer == 110){
+                    invasionTimer = 0;
+                    invasionFight = 3;
+                    switch (currentStage) {
+                        case 2:
+                            playerDef++;
+                            break;
+                            
+                        case 3:
+                            playerDef++;
+                            break;
+                        case 4:
+                            //shield change
+                            break;
+                        case 5:
+                            playerDef += 2;
+                            break;
+                        default:
+                            playerDef++;
+                            break;
+                    }
+                }
+            }
             
-            
-             
-             
-            
-            
-            
+            if(invasionFight == 3 && invasionTimer <= 110){
+                transparency = 0;
+                if(invasionTimer < 25)
+                    transparency = invasionTimer * 0.04;
+                else if(invasionTimer < 50)
+                    transparency = (50 - invasionTimer) * 0.04;
+                else if(invasionTimer >= 60 && invasionTimer < 85)
+                    transparency = (invasionTimer - 60) * 0.04;
+                else if(invasionTimer >= 85)
+                    transparency = (110 - invasionTimer) * 0.04;
+                
+                switch (currentStage) {
+                    case 2:
+                        al_draw_tinted_scaled_bitmap(Phantom2_3, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom2_3),
+                                                     al_get_bitmap_height(Phantom2_3),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom2_3), 0);
+                        break;
+                    case 3:
+                        al_draw_tinted_scaled_bitmap(Phantom3_3, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom3_3),
+                                                     al_get_bitmap_height(Phantom3_3),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom3_3), 0);
+                        break;
+                    case 4:
+                        al_draw_tinted_scaled_bitmap(Phantom4_3, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom4_3),
+                                                     al_get_bitmap_height(Phantom4_3),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom4_3), 0);
+                        break;
+                    case 5:
+                        al_draw_tinted_scaled_bitmap(Phantom5_3, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom5_3),
+                                                     al_get_bitmap_height(Phantom5_3),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom5_3), 0);
+                        break;
+                        
+                    default:
+                        al_draw_tinted_scaled_bitmap(Phantom6_3, al_map_rgba_f(1, 1, 1, transparency),
+                                                     0, 0,
+                                                     al_get_bitmap_width(Phantom6_3),
+                                                     al_get_bitmap_height(Phantom6_3),
+                                                     0, altura - 200,
+                                                     largura, al_get_bitmap_height(Phantom6_3), 0);
+                        break;
+                }
+                invasionTimer += 2;
+                if(invasionTimer == 110){
+                    invasionTimer = 0;
+                    invasionFight = 0;
+                }
+            }
+
             // Hp drawing
             if(playerHP >= 1)
                 al_draw_filled_rectangle(41, altura - 79, (tempHP * (largura - 82) + 41), altura - 51, cor);
@@ -641,7 +786,6 @@ int main() {
                 
                 respawnTime = -300;
             }
-
             
             al_flip_display();
 
@@ -656,7 +800,10 @@ int main() {
                         temp = temp -> prox;
 
                 }while(temp -> prox != NULL);
+                monsterGotHit(buffer, temp -> monster);                
             }
+            if(omniList -> boss != NULL)
+                monsterGotHit(buffer, omniList -> boss);
 
             //Dead player is dead.
             if(playerHP <= 0){
@@ -902,7 +1049,7 @@ void dismissAttack(multiList *list, noAtaque *noAtk){
 
 
 // Bob.9.5 - Death screen
-void deathScreen(){
+void deathScreen(){    
     ALLEGRO_SAMPLE *deathSample = al_load_sample("SFX/Death.ogg");
     if(!deathSample)
         erro("erro ao alocar deathSample.\n");
@@ -920,6 +1067,8 @@ void deathScreen(){
         al_flip_display();
         al_rest(0.05);
     }
+
+    al_rest(3);
 
     al_destroy_sample(deathSample);
 }
