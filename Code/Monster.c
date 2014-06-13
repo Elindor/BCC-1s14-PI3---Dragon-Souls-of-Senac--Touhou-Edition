@@ -14,6 +14,8 @@ Monster* initWithMonsterNumber(int fase){
     
     int monsterId = getId(fase);    //Recebe um ID de monstro gerado aleatóriamente baseado na fase
     Monster *monstro = malloc(sizeof(Monster));
+
+    monstro -> isHit = 0;
     
     int random = rand()%180;    // X é definido aleatóriamente (lado ou não lado?)
     random = random % 2;
@@ -58,7 +60,8 @@ Monster* initWithBossNumber(int fase){
     
     int monsterId = fase;
     Monster *monstro = malloc(sizeof(Monster));
-    
+
+    monstro -> isHit = 0;
     
     monstro -> X = globalLargura/2;
     
@@ -665,8 +668,9 @@ void getName(int num, char *temp){
 void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
     unsigned char rd, gd, bd, am;
 
-    ALLEGRO_LOCKED_REGION *lockedDisplay = al_lock_bitmap(display, ALLEGRO_PIXEL_FORMAT_ARGB_8888, ALLEGRO_LOCK_READONLY);
-    ALLEGRO_LOCKED_REGION *lockedMinion = al_lock_bitmap(m -> image, ALLEGRO_PIXEL_FORMAT_ARGB_8888, ALLEGRO_LOCK_READONLY);
+    //tentar usar putpixels pra ver a hitbox...
+    ALLEGRO_LOCKED_REGION *lockedDisplay = al_lock_bitmap(display, ALLEGRO_PIXEL_FORMAT_ARGB_8888, ALLEGRO_LOCK_READWRITE);
+    ALLEGRO_LOCKED_REGION *lockedMinion = al_lock_bitmap(m -> image, ALLEGRO_PIXEL_FORMAT_ARGB_8888, ALLEGRO_LOCK_READWRITE);
 
     //tipo = abgr8888, pitch = variável, pixel_size = 4
 
@@ -678,19 +682,33 @@ void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
     unsigned char *rowM = lockedMinion -> data;
     unsigned char *rowD = lockedDisplay -> data;
 
-    rowD += lockedDisplay -> pitch * (int)m -> Y;
+    rowD += ((int)m -> Y * lockedDisplay -> pitch);
+    rowD += ((int)m -> X * lockedDisplay -> pixel_size);
 
     for(int y = 0; y < hm; y++){
         unsigned char *pixelM = rowM;
         unsigned char *pixelD = rowD;
-        pixelD += (4 * (int)m -> X);
 
         for(int x = 0; x < wm; x++){
+            am = rd = bd = gd = 0;
+
             pixelM += 3;
             am = *pixelM;
             pixelM++;
 
-            if(am > 0 && y + m -> Y >= 0 && y + m -> Y < hd && x + m -> X >= 0 && x + m -> X < wd){                
+            if(am == 0){
+                pixelM -= 4;
+                *pixelM = 255;
+                pixelM++;
+                *pixelM = 255;
+                pixelM++;
+                *pixelM = 0;
+                pixelM++;
+                *pixelM = 255;
+                pixelM++;
+            }
+
+            if(am != 0 && y + (int)m -> Y >= 0 && y + (int)m -> Y < hd && x + (int)m -> X >= 0 && x + (int)m -> X < wd){
                 bd = *pixelD;
                 pixelD++;
 
@@ -698,10 +716,7 @@ void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
                 pixelD++;
 
                 rd = *pixelD;
-                pixelD++;
-
-                am = *pixelD;
-                pixelD++;
+                pixelD += 2;
 
                 if(rd == 255 && gd == 0 && bd == 0){
                     if(m -> isHit == 0){
@@ -713,12 +728,18 @@ void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
 
                         if(playerHP > 100)
                             playerHP = 100;
+
+                        al_unlock_bitmap(display);
+                        al_unlock_bitmap(m -> image);
+                        return;
                     }
 
-                    al_unlock_bitmap(display);
-                    al_unlock_bitmap(m -> image);
-
-                    return;
+                    else if(m -> isHit == 1){
+                        al_unlock_bitmap(display);
+                        al_unlock_bitmap(m -> image);
+                        printf("Ja está sendo atacado!\n");
+                        return;
+                    }
                 }
             }
 
@@ -736,9 +757,5 @@ void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
     if(m -> isHit == 1){
         printf("Espada saiu do minion\n");
         m -> isHit = 0;
-    }
-    
-    else{
-        printf("miss\n");
     }
 }

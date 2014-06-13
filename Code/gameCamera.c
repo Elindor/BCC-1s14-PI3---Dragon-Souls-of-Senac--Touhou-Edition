@@ -123,7 +123,6 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
     }
 
     /**********/
-    //camera_copia(cam, cam->quadro, gameScreen);
     camera_copia(cam, matriz, silhueta);
 
     al_convert_mask_to_alpha(silhueta, al_map_rgb(0, 0, 0));
@@ -131,7 +130,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
     al_draw_tinted_bitmap(silhueta, al_map_rgba(75, 75, 175, 25), 0, 0, 0);
     /**********/
 
-    if(bn > 50){
+    if(bn > 25){
         *sx = bx / bn;
         *sy = by / bn;
     }

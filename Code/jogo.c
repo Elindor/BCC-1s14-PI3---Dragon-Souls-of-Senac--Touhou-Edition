@@ -6,6 +6,7 @@ void dismissAttack(multiList *list, noAtaque *noAtk);
 void dismissMonsters(multiList *list);
 int currentStage;
 int mobKills;
+int mobCount;
 
 void deathScreen();
 
@@ -205,14 +206,14 @@ int main() {
     int cycle = 0;
     int hitx = rand() % (largura);
     int hity = rand() % (altura);
-    int mobLimit = 4;
-    int mobCount = 0;
+    mobCount = 0;
     mobKills = 0;
     int mobTarget = 20;
     int respawnTime = -200;
     int barrier = 20;
     int playerDef = 0;
     int shouldLoad = 1;
+    int bossAlert = 0;
     int bossFight = 0;
     int invasionFight = 0;
     int invasionTimer = 0;
@@ -283,7 +284,7 @@ int main() {
 
             // Bob.4.1 Monster Spawning
             
-            if(respawnTime >= 300 - (s -> stageNum * 18) && mobCount <= s -> limitSpawn){
+            if(respawnTime >= 300 - (s -> stageNum * 18) && mobCount <= s -> limitSpawn && respawnTime < 10000){
                 mobCount++;
                 if(mobCount == s -> darkSpawn){
                     Monster* Phantom = initWithBossNumber(s -> darkPhantom);
@@ -321,30 +322,38 @@ int main() {
                 }while(temp -> prox != NULL);
             }
             
-            // monster deaths!
+            // Check monster HPs
             dismissMonsters(omniList);
             
             // Bob.4.3 Boss cycles - Also phantoms
             
             if(omniList -> boss != NULL){
                 if(omniList -> boss -> HP <= 0){
-                    free(omniList -> boss -> image);
-                    free(omniList -> boss);
+                    printf("killed boss!\n");
+                    al_destroy_bitmap(omniList -> boss -> image);
+                    omniList -> boss = NULL;
                     if(invasionFight == 1){ //Se era uma luta contra Phantom
-                        invasionFight = 2;
+                        invasionFight ++;
                         mobKills++;
                     }
                 }
             }
+
+            if(omniList -> primeiroMonstro == NULL)
+                printf("no monsters\n");
             
-            if(omniList -> boss == NULL && omniList -> primeiroMonstro == NULL && mobKills == s -> targetKills){
+            if(omniList -> boss == NULL && mobKills >= s -> targetKills && bossFight == 0){
                 //Spawns boss
-                if(respawnTime < 10200){        //Desliga musica, seta 300 ciclos de espera
+                if(respawnTime < 10200 && bossAlert == 0){        //Desliga musica, seta 300 ciclos de espera
                     respawnTime = 10000;
+                    bossAlert = 1;
+                    printf("incoming boss!!!\n");
                     al_set_audio_stream_playing(s -> stageAudio, false);
                 }
-                else{                           //liga musica, BEGIN
+
+                if(respawnTime > 10200 && bossAlert == 1){                           //liga musica, BEGIN
                     Monster* CHEFE = initWithBossNumber(20 + currentStage);
+                    printf("DANGER! DANGER! DANGER!\n");
                     omniList -> boss = CHEFE;
                     al_set_audio_stream_playing(s -> bossAudio, true);
                     bossFight = 1;
@@ -362,14 +371,32 @@ int main() {
             }
             
             if(bossFight == 1 && omniList -> boss == NULL){
+                printf("prepare to the next stage!\n");
                 bossFight = 0;
+                bossAlert = 0;
                 respawnTime = -300;
                 stageWillChange = 1;
                 currentStage++;
             }
             
             //Processamento de câmera.
-            cameraLoop(matriz, cam, filaPlayerAtk, background, buffer, &sx, &sy);
+            cameraLoop(matriz, cam, filaPlayerAtk, background, gameScreen, &sx, &sy);
+
+            //check minion hitbox
+            if(omniList -> primeiroMonstro != NULL){
+                noMonster *temp = omniList -> primeiroMonstro;
+                monsterGotHit(gameScreen, temp -> monster);
+                
+                do{
+                    if(temp -> prox != NULL){
+                        temp = temp -> prox;
+                        monsterGotHit(gameScreen, temp -> monster);
+                    }
+                }while(temp -> prox != NULL);
+            }
+            
+            if(omniList -> boss != NULL)
+                monsterGotHit(gameScreen, omniList -> boss);
 
             
             // Bob.4.4 Attack Cycles - move, check strike
@@ -449,8 +476,42 @@ int main() {
                 al_draw_textf(fonte, branco, largura - 65, 20, 0,
                              "/%d", s -> targetKills);
             }
+
             else{
-                al_draw_filled_rectangle(41, 79, (1 * (largura - 82) + 41),  51, cor);
+                float bossHpPct;
+                switch(currentStage){
+                    case 1:
+                        bossHpPct = (float)omniList -> boss -> HP / 100;
+                        break;
+
+                    case 2:
+                        bossHpPct = (float)omniList -> boss -> HP / 160;
+                        break;
+
+                    case 3:
+                        bossHpPct = (float)omniList -> boss -> HP / 120;
+                        break;
+
+                    case 4:
+                        bossHpPct = (float)omniList -> boss -> HP / 200;
+                        break;
+
+                    case 5:
+                        bossHpPct = (float)omniList -> boss -> HP / 400;
+                        break;
+
+                    case 6:
+                        bossHpPct = (float)omniList -> boss -> HP / 1000;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                if(omniList -> boss -> HP < 0)
+                    omniList -> boss -> HP = 0;
+
+                al_draw_filled_rectangle(41, 51, (omniList -> boss -> HP * (largura - 41) + 41) / 100,  79, cor);
                 
                 al_draw_scaled_bitmap(HPBarBox,
                                       0, 0,
@@ -789,22 +850,6 @@ int main() {
             
             al_flip_display();
 
-            //check minion hitbox
-            if(omniList -> primeiroMonstro != NULL){
-                noMonster *temp = omniList -> primeiroMonstro;
-
-                do{
-                    monsterGotHit(buffer, temp -> monster);
-
-                    if(temp -> prox != NULL)
-                        temp = temp -> prox;
-
-                }while(temp -> prox != NULL);
-                monsterGotHit(buffer, temp -> monster);                
-            }
-            if(omniList -> boss != NULL)
-                monsterGotHit(buffer, omniList -> boss);
-
             //Dead player is dead.
             if(playerHP <= 0){
                 al_set_audio_stream_playing(s -> stageAudio, false);
@@ -816,7 +861,6 @@ int main() {
         }
         
         respawnTime++;
-        
     }
     
     
@@ -862,25 +906,6 @@ int main() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /***********************************************************************/
 //   Bob.9.0      Other Functions -- reserved for required here only   //
 /***********************************************************************/
@@ -896,7 +921,7 @@ void spawnMonster(int currentStage, multiList* lista){
 
     //Procura lugar na lista
     if(lista -> primeiroMonstro == NULL){
-
+        printf("First!\n");
         lista -> primeiroMonstro = m;
         return;
     }
@@ -916,12 +941,66 @@ void spawnMonster(int currentStage, multiList* lista){
 
 void dismissMonsters(multiList *list){
     noMonster *verifiedMonster = list -> primeiroMonstro;
-    noMonster * temp = NULL;
+    noMonster *temp = NULL;
     
     if(!verifiedMonster)
         return;
-    
-    while(verifiedMonster -> monster -> HP <= 0 && verifiedMonster == list -> primeiroMonstro){      //Este é o primeiro monstro
+
+    if(verifiedMonster -> monster -> HP <= 0){
+        printf("morreu\n");
+        temp = verifiedMonster;
+        verifiedMonster = verifiedMonster -> prox;
+        list -> primeiroMonstro = verifiedMonster;
+
+        al_destroy_bitmap(temp -> monster -> image);
+        free(temp -> monster);
+        free(temp);
+
+        mobKills++;
+        mobCount--;
+
+        if(!verifiedMonster)
+            return;
+    }
+
+    if(verifiedMonster -> prox != NULL)
+        temp = verifiedMonster -> prox;
+
+    else
+        return;
+
+    do{
+        if(temp -> monster -> HP <= 0){
+            printf("morreu\n");
+            noMonster *toKill = temp;
+            temp = temp -> prox;
+
+            if(toKill == list -> primeiroMonstro)
+                list -> primeiroMonstro = temp;
+
+            else{
+                verifiedMonster -> prox = temp;
+            }
+
+            al_destroy_bitmap(toKill -> monster -> image);
+            free(toKill -> monster);
+            free(toKill);
+
+            mobKills++;
+            mobCount--;
+        }
+
+        verifiedMonster = verifiedMonster -> prox;
+
+        if(!verifiedMonster)
+            return;
+
+        temp = verifiedMonster -> prox;
+
+    }while(temp != NULL);
+
+    /*if(verifiedMonster -> monster -> HP <= 0 && verifiedMonster == list -> primeiroMonstro){      //Este é o primeiro monstro
+        printf("murió\n");
         list -> primeiroMonstro = verifiedMonster -> prox;
         temp = verifiedMonster;
         verifiedMonster = verifiedMonster -> prox;
@@ -931,9 +1010,10 @@ void dismissMonsters(multiList *list){
         mobKills++;
     }
     
-    
+    printf("verificando outros minions\n");
     while(verifiedMonster -> prox != NULL){
         if(verifiedMonster -> prox -> monster -> HP <= 0){
+            printf("murió\n");
             temp = verifiedMonster -> prox;
             verifiedMonster -> prox  = verifiedMonster -> prox -> prox;
             al_destroy_bitmap(temp -> monster -> image);
@@ -945,14 +1025,15 @@ void dismissMonsters(multiList *list){
         verifiedMonster = verifiedMonster -> prox;
         
     }
-    if(verifiedMonster -> monster -> HP <= 0){
+
+    printf("verificando ultimo minon\n");
+    if(verifiedMonster -> monster -> HP <= 0 && verifiedMonster != NULL){
+        printf("murió\n");
         al_destroy_bitmap(verifiedMonster -> monster -> image);
         free(verifiedMonster -> monster);
         free(verifiedMonster);
         mobKills++;
-    }
-    
-
+    }*/
 }
 
 
