@@ -41,5 +41,6 @@ bool checkAttack(Ataque *attack);
 void getImageAttack(int number, ALLEGRO_BITMAP **image);
 int getDamage(int number);
 float getDuration(int num);
+void playAudio(int num);
 
 #endif

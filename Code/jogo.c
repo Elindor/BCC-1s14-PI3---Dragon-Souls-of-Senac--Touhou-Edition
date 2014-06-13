@@ -188,12 +188,17 @@ int main() {
     
     ALLEGRO_SAMPLE *invasionSample = al_load_sample("SFX/Invasion.ogg");
     ALLEGRO_SAMPLE *victorySample = al_load_sample("SFX/Victory.ogg");
+    ALLEGRO_SAMPLE *deathSample = al_load_sample("SFX/Death.ogg");
     ALLEGRO_SAMPLE *blockSample = al_load_sample("SFX/Shield.ogg");
+    ALLEGRO_SAMPLE *enemyStrike = al_load_sample("SFX/Damage.ogg");
+
 
     ALLEGRO_BITMAP *endingScreen = al_load_bitmap("Graphics/endingScreen.png");
     
 
     ALLEGRO_BITMAP *shield = al_load_bitmap("Graphics/LeatherShield.png");
+    ALLEGRO_BITMAP *shield2 = al_load_bitmap("Graphics/Shield2.png");
+
 
     stage *s = NULL;
 
@@ -219,8 +224,9 @@ int main() {
     int invasionTimer = 0;
     int stageChangeCountdown = 0;
     int stageWillChange = 0;
+    int shieldType = 1;
     float transparency;
-    currentStage = 1;
+    currentStage = 3;
     playerHP = 100;
     playerAtk = 4;
     
@@ -417,23 +423,37 @@ int main() {
                     // HIT
                     else{
                         if(temp -> attack -> deathCountdown == 0){
-                            
+                            printf("Hitting\n");
                             double value = ( pow(temp -> attack -> targetX - sx, 2) + pow(temp -> attack -> targetY - sy, 2) );
                             int dist = sqrt(value) - 7;
+                            int shieldWidth;
+                            if(shieldType == 1)
+                                shieldWidth = al_get_bitmap_width(shield);
+                            else
+                                shieldWidth = al_get_bitmap_width(shield2);
                             
-                            if(dist < al_get_bitmap_width(shield) && dist > -al_get_bitmap_width(shield)){
-                                printf("Blocked!!\n");
+                            if(dist < shieldWidth && dist > -shieldWidth && sx != -1){
+                                al_play_sample(blockSample, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+                                printf("Blocked: sx = %d, sy = %d!!\n", sx, sy);
 
                             }
-                            else if(barrier >= 1){    //Se houver barreira, tem todo esse paranauê
-                                barrier -=temp -> attack -> damage;
-                                if(barrier < 0){
-                                    playerHP += barrier;
-                                    barrier = 0;
+                            else{
+                                int damage = temp -> attack -> damage - playerDef;
+                                al_play_sample(enemyStrike, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+
+                                if(damage <= 0)
+                                    damage = 1;
+                                
+                                if(barrier >= 1){    //Se houver barreira, tem todo esse paranauê
+                                    barrier -= damage;
+                                    if(barrier < 0){
+                                        playerHP += barrier;
+                                        barrier = 0;
+                                    }
                                 }
+                                else // Senão é bem simples
+                                    playerHP -= damage;
                             }
-                            else // Senão é bem simples
-                                playerHP -= temp -> attack -> damage;
 
                             
                         }
@@ -464,8 +484,12 @@ int main() {
             /***********************************************************************/
             
             
-            if(sx > 0 && sy > 0)
-                al_draw_tinted_bitmap(shield, al_map_rgba_f(1, 1, 1, 0.6), sx - al_get_bitmap_width(shield) / 2, sy - al_get_bitmap_height(shield) / 2, 0);
+            if(sx > 0 && sy > 0){
+                if(shieldType == 1)
+                    al_draw_tinted_bitmap(shield, al_map_rgba_f(1, 1, 1, 0.6), sx - al_get_bitmap_width(shield) / 2, sy - al_get_bitmap_height(shield) / 2, 0);
+                else
+                    al_draw_tinted_bitmap(shield2, al_map_rgba_f(1, 1, 1, 0.6), sx - al_get_bitmap_width(shield2) / 2, sy - al_get_bitmap_height(shield2) / 2, 0);
+            }
 
             
             
@@ -656,7 +680,7 @@ int main() {
                             playerDef++;
                             break;
                         case 4:
-                            //shield change
+                            shieldType = 2;
                             break;
                         case 5:
                             playerDef += 2;
@@ -854,7 +878,7 @@ int main() {
             if(playerHP <= 0){
                 al_set_audio_stream_playing(s -> stageAudio, false);
                 al_set_audio_stream_playing(s -> bossAudio, false);
-                
+
                 deathScreen();
                 break;
             }
@@ -1060,7 +1084,7 @@ int beginAttack(int *attackNumber, int X0, int Y0, multiList* lista){
     //geradores adicionais especificos
     if(currentStage == 1 && chosenAttack == 13)
         totalNumberOfAttacks = 3;
-    if(currentStage == 3 && chosenAttack == 6){
+    if(currentStage == 3 && chosenAttack == 6 && mobKills == 70){
         totalNumberOfAttacks = 7;
         timeInterval = 3;
     }

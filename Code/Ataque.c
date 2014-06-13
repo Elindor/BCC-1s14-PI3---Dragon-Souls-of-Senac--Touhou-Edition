@@ -1,5 +1,6 @@
 #include "Ataque.h"
 #include "globals.h"
+#include "jogo.h"
 
 Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     Ataque *ataque = malloc(sizeof(Ataque));
@@ -27,7 +28,7 @@ Ataque *initWithAttackNumber(int attackId, int senderX, int senderY){
     ataque -> currentDuration = 0;
     ataque -> image = NULL;
     getImageAttack(attackId, &ataque -> image);
-    
+    playAudio(attackId);
     ataque -> duration = getDuration(attackId);
     ataque -> damage = getDamage(attackId);
 
@@ -232,4 +233,52 @@ float getDuration(int num){      //Este metodo devolve qual o tempo de animaçã
     }
 
     return 0;
+}
+
+
+void playAudio(int num){      //Este metodo devolve qual o tempo de animação do ataque.
+    ALLEGRO_SAMPLE *sample;
+    switch(num){
+        case Pincer:
+            sample = al_load_sample("SFX/Cut.ogg");
+            break;
+        case Spit:
+            sample = al_load_sample("SFX/Spit.ogg");
+            break;
+        case Needle:
+            sample = al_load_sample("SFX/Needle.ogg");
+            break;
+        case Cut:
+            sample = al_load_sample("SFX/Cut.ogg");
+            break;
+        case SpearThrow:
+            sample = al_load_sample("SFX/SpearThrow.ogg");
+            break;
+        case MagicMissiles:
+            sample = al_load_sample("SFX/MagicMissiles.ogg");
+            break;
+        case Spores:
+            sample = al_load_sample("SFX/Spores.ogg");
+            break;
+        case NeedleB:
+            sample = al_load_sample("SFX/Needle.ogg");
+            break;
+        case CutB:
+            sample = al_load_sample("SFX/Cut.ogg");
+            break;
+        case Omnicut:
+            sample = al_load_sample("SFX/Cut.ogg");
+            break;
+        case Curse:
+            sample = al_load_sample("SFX/Curse.ogg");
+            break;
+        case Web:
+            sample = al_load_sample("SFX/Web.ogg");
+            break;
+        case Fireball:
+            sample = al_load_sample("SFX/Fireball.ogg");
+            break;
+    }
+    
+    al_play_sample(sample, 1, 30, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 }
