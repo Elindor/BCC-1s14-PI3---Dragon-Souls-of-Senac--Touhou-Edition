@@ -237,7 +237,7 @@ float getDuration(int num){      //Este metodo devolve qual o tempo de animaçã
 
 
 void playAudio(int num){      //Este metodo devolve qual o tempo de animação do ataque.
-    ALLEGRO_SAMPLE *sample;
+    ALLEGRO_SAMPLE *sample = NULL;
     switch(num){
         case Pincer:
             sample = al_load_sample("SFX/Cut.ogg");
@@ -280,5 +280,5 @@ void playAudio(int num){      //Este metodo devolve qual o tempo de animação d
             break;
     }
     
-    al_play_sample(sample, 1, 30, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+    al_play_sample(sample, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 }

@@ -152,7 +152,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
     else if(lastX >= 0 && lastY >= 0)
         insere(f, lastX, lastY);
 
-    if(f->count > 10)
+    if(f->count > 5)
         retira(f);
 
     drawAtk(f);

@@ -86,7 +86,7 @@ int main() {
     if(!al_init_acodec_addon())
         erro("erro na inicializção do acodec.\n");
 
-    if(!al_reserve_samples(1))
+    if(!al_reserve_samples(10))
         erro("erro ao alocar canais de áudio.\n");
 
     al_init_font_addon();
@@ -215,7 +215,7 @@ int main() {
     mobKills = 0;
     int mobTarget = 20;
     int respawnTime = -200;
-    int barrier = 20;
+    int barrier = 0;
     int playerDef = 0;
     int shouldLoad = 1;
     int bossAlert = 0;
@@ -226,7 +226,7 @@ int main() {
     int stageWillChange = 0;
     int shieldType = 1;
     float transparency;
-    currentStage = 3;
+    currentStage = 1;
     playerHP = 100;
     playerAtk = 4;
     
@@ -253,6 +253,21 @@ int main() {
             al_set_audio_stream_playing(s -> stageAudio, true);
             mobKills = 0;
             shouldLoad = 0;
+            switch(currentStage){
+                case 2:
+                barrier += 30;
+                break;
+                 case 3:
+                barrier += 40;
+                break;
+                 case 4:
+                barrier += 50;
+                break;
+                 case 5:
+                barrier += 60;
+                break;
+
+            }
         }
             
 

@@ -50,6 +50,9 @@ Monster* initWithMonsterNumber(int fase){
     monstro -> ready = 0;
     monstro -> currentCooldown = 0;
     sprintf (monstro -> name, "\n");
+    if(monstro -> Y < al_get_bitmap_height(monstro -> image)){
+        monstro -> Y = al_get_bitmap_height(monstro -> image);
+    }
     
     monstro -> centerX = monstro -> X + (al_get_bitmap_width(monstro -> image) /2);
     monstro -> centerY = monstro -> Y + (al_get_bitmap_height(monstro -> image) /2);
@@ -695,18 +698,6 @@ void monsterGotHit(ALLEGRO_BITMAP *display, Monster *m){
             pixelM += 3;
             am = *pixelM;
             pixelM++;
-
-            if(am == 0){
-                pixelM -= 4;
-                *pixelM = 255;
-                pixelM++;
-                *pixelM = 255;
-                pixelM++;
-                *pixelM = 0;
-                pixelM++;
-                *pixelM = 255;
-                pixelM++;
-            }
 
             if(am != 0 && y + (int)m -> Y >= 0 && y + (int)m -> Y < hd && x + (int)m -> X >= 0 && x + (int)m -> X < wd){
                 bd = *pixelD;
