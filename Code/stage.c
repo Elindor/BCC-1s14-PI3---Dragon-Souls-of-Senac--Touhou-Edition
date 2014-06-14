@@ -22,6 +22,8 @@ stage *initStageWithNumber(int n){
 			if(!temp -> bossAudio)
 				erro("Erro na alocação de bossAudio para stage 1\n");
 
+			al_set_audio_stream_gain(temp -> bossAudio, 1.5);
+
             temp -> targetKills = 20;
             
             temp -> limitSpawn = 4;
@@ -45,7 +47,7 @@ stage *initStageWithNumber(int n){
             
             temp -> limitSpawn = 5;
             
-            randomModifier += 15;
+            randomModifier += 30;
             
 			break;
 
@@ -66,7 +68,7 @@ stage *initStageWithNumber(int n){
             
             temp -> limitSpawn = 6;
             
-            randomModifier += 20;
+            randomModifier += 40;
             
 			break;
 
@@ -87,7 +89,7 @@ stage *initStageWithNumber(int n){
             
             temp -> limitSpawn = 6;
             
-            randomModifier += 70;
+            randomModifier += 80;
             
 			break;
 
@@ -108,7 +110,7 @@ stage *initStageWithNumber(int n){
             
             temp -> limitSpawn = 6;
             
-            randomModifier += 40;
+            randomModifier += 70;
             
 			break;
 
@@ -147,6 +149,9 @@ stage *initStageWithNumber(int n){
     }
     //temp -> darkPhantom = 30 + n;
     //temp -> darkSpawn = 1;
+
+    al_set_audio_stream_playmode(temp -> stageAudio, ALLEGRO_PLAYMODE_LOOP);
+    al_set_audio_stream_playmode(temp -> bossAudio, ALLEGRO_PLAYMODE_LOOP);
 
 	return temp;
 }

@@ -225,6 +225,7 @@ int main() {
     int stageChangeCountdown = 0;
     int stageWillChange = 0;
     int shieldType = 1;
+    int currentBossHP;
     float transparency;
     currentStage = 1;
     playerHP = 100;
@@ -248,11 +249,15 @@ int main() {
         if(shouldLoad){
             s = initStageWithNumber(currentStage);
             
+            al_attach_audio_stream_to_mixer(s -> bossAudio, al_get_default_mixer());
             al_attach_audio_stream_to_mixer(s -> stageAudio, al_get_default_mixer());
             al_set_audio_stream_playing(s -> bossAudio, false);
             al_set_audio_stream_playing(s -> stageAudio, true);
+
             mobKills = 0;
             shouldLoad = 0;
+            bossAlert = 0;
+
             switch(currentStage){
                 case 2:
                 barrier += 30;
@@ -305,7 +310,7 @@ int main() {
 
             // Bob.4.1 Monster Spawning
             
-            if(respawnTime >= 300 - (s -> stageNum * 18) && mobCount <= s -> limitSpawn && respawnTime < 10000){
+            if(respawnTime >= 300 - (s -> stageNum * 18) && mobCount   <= s -> limitSpawn && respawnTime < 10000 && bossAlert == 0 && mobCount + mobKills <= s -> targetKills){
                 mobCount++;
                 if(mobCount == s -> darkSpawn){
                     Monster* Phantom = initWithBossNumber(s -> darkPhantom);
@@ -364,19 +369,24 @@ int main() {
                 printf("no monsters\n");
             
             if(omniList -> boss == NULL && mobKills >= s -> targetKills && bossFight == 0){
+                printf("Lu3Lu3BLBL\n");
                 //Spawns boss
-                if(respawnTime < 10200 && bossAlert == 0){        //Desliga musica, seta 300 ciclos de espera
-                    respawnTime = 10000;
+                if(bossAlert == 0){        //Desliga musica, seta 300 ciclos de espera
+                    respawnTime = -200;
                     bossAlert = 1;
                     printf("incoming boss!!!\n");
                     al_set_audio_stream_playing(s -> stageAudio, false);
+                    al_detach_audio_stream(s -> stageAudio);
+
                 }
 
-                if(respawnTime > 10200 && bossAlert == 1){                           //liga musica, BEGIN
+                if(respawnTime > 0 && bossAlert == 1){                           //liga musica, BEGIN
                     Monster* CHEFE = initWithBossNumber(20 + currentStage);
                     printf("DANGER! DANGER! DANGER!\n");
                     omniList -> boss = CHEFE;
+                    currentBossHP = CHEFE -> HP;
                     al_set_audio_stream_playing(s -> bossAudio, true);
+                    printf("Should play boss audio!!!\n");
                     bossFight = 1;
                 }
             }
@@ -398,6 +408,9 @@ int main() {
                 respawnTime = -300;
                 stageWillChange = 1;
                 currentStage++;
+                al_set_audio_stream_playing(s -> bossAudio, false);
+                al_detach_audio_stream(s -> stageAudio);
+
             }
             
             //Processamento de câmera.
@@ -550,7 +563,7 @@ int main() {
                 if(omniList -> boss -> HP < 0)
                     omniList -> boss -> HP = 0;
 
-                al_draw_filled_rectangle(41, 51, (omniList -> boss -> HP * (largura - 41) + 41) / 100,  79, cor);
+                al_draw_filled_rectangle(41, 51, (omniList -> boss -> HP * (largura - 41) + 41) / currentBossHP,  79, cor);
                 
                 al_draw_scaled_bitmap(HPBarBox,
                                       0, 0,
@@ -878,6 +891,7 @@ int main() {
                     al_set_audio_stream_playing(s -> stageAudio, false);
                     al_set_audio_stream_playing(s -> bossAudio, false);
                     shouldLoad = 1;
+                    playerAtk += 2;
                 }
                 if(stageChangeCountdown == 300){
                     stageWillChange = 0;
@@ -907,7 +921,6 @@ int main() {
     //   Bob.8.0      LOOPING BREAK -- Starting shutdown                   //
     /***********************************************************************/
 
-    //Somehow crashing...
     removeStage(s);
 
     al_destroy_bitmap(gameScreen);
@@ -932,13 +945,21 @@ int main() {
     al_destroy_display(display);
     al_destroy_timer(timer);
 
-    al_shutdown_primitives_addon();
-    al_shutdown_image_addon();
-    //al_uninstall_audio();
-    //al_uninstall_system();
-
-
     camera_finaliza(cam);
+
+    al_shutdown_primitives_addon();
+    printf("primitives addon encerrado\n");
+    al_shutdown_image_addon();
+    printf("image addon encerrado\n");
+    al_uninstall_audio();
+    printf("audio addon encerrado\n");
+    al_shutdown_font_addon();
+    printf("font addon encerrado\n");
+    al_shutdown_ttf_addon();
+    printf("ttf addon encerrado\n");
+    printf("addons liberados\n");
+
+    printf("SAIU\n");
 
     return EXIT_SUCCESS;
 }
@@ -1191,4 +1212,5 @@ void deathScreen(){
     al_rest(3);
 
     al_destroy_sample(deathSample);
+    al_destroy_bitmap(deathScreen);
 }

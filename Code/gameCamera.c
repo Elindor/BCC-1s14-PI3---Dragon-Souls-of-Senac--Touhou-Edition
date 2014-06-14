@@ -74,7 +74,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
             //Espada
             rgbToHsv(cam->quadro[y][x][0], cam->quadro[y][x][1], cam->quadro[y][x][2], &h, &s, &v);
 
-            if((h < 30 || h > 330) && s > 75 && v > 75){
+            if((h < 30 || h > 330) && s > 70 && v > 70){
                 cyr += y;
                 cxr += x;
                 cnr++;
@@ -130,7 +130,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
     al_draw_tinted_bitmap(silhueta, al_map_rgba(75, 75, 175, 25), 0, 0, 0);
     /**********/
 
-    if(bn > 25){
+    if(bn){
         *sx = bx / bn;
         *sy = by / bn;
     }
@@ -140,7 +140,7 @@ void cameraLoop(unsigned char ***matriz, camera *cam, fila *f, int ***background
         *sy = -1;
     }
 
-    if(cnr > 5){
+    if(cnr){
         x = cxr / cnr;
         y = cyr / cnr;
 

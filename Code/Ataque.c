@@ -87,7 +87,7 @@ void getImageAttack(int number, ALLEGRO_BITMAP **image){        // Isto procura 
         break;
     case Spit:
         sprintf (temp, "Spit");
-        width = height = 50;
+        width = height = 75;
         break;
     case Needle:
         sprintf (temp, "Needle");
@@ -147,43 +147,43 @@ int getDamage(int number){        //Este método devolve o dano de um ataque, da
     
     switch(number){
         case Pincer:
-            return 2;
+            return 1;
 
         case Spit:
-            return 7;
-
-        case Needle:
-            return 15;
-
-        case Cut:
             return 6;
 
+        case Needle:
+            return 14;
+
+        case Cut:
+            return 5;
+
         case SpearThrow:
-            return 8;
+            return 7;
 
         case MagicMissiles:
-            return 3;
-
-        case Spores:
             return 2;
 
+        case Spores:
+            return 1;
+
         case NeedleB:
-            return 15;
+            return 14;
 
         case CutB:
-            return 11;
+            return 10;
 
         case Omnicut:
-            return 8;
+            return 7;
 
         case Curse:
-            return 5;
+            return 4;
 
         case Web:
             return 0;
 
         case Fireball:
-            return 10;
+            return 9;
     }
 
     return 0;
